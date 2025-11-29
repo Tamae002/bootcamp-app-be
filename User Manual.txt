@@ -12,3 +12,19 @@ models: Definisi struktur data atau skema database.
 utils: Kumpulan fungsi-fungsi bantuan yang bisa digunakan di berbagai bagian aplikasi. Biasanya tidak digunakan kecuali Service sudah membengkak, fungsinya dipindahkan sedikit kesini agar tidak sulit saat debugging
 middleware: Kode yang menjadi perantara request dan controller
 config: Konfigurasi spesifik aplikasi seperti koneksi database dan kunci API
+
+install tools
+
+1. Node.js
+Ketik: winget install OpenJS.NodeJS.LTS di terminal
+untuk selanjutnya ketik node -v dan npm -v untuk mengecek versi
+
+2. Express.js
+Ketik: npm install express di terminal
+
+3. Prisma
+Ketik: npm install prisma --save-dev di terminal
+Ketik: npx prisma init di terminal untuk menginisialisasi Prisma di proyek kalian
+
+4. Nodemon (opsional, untuk pengembangan)
+Ketik: npm install nodemon --save-dev di terminal
