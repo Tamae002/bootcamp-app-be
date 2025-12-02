@@ -1,21 +1,19 @@
-import express from 'express'
-import { HOSTNAME, PORT } from './config/env.js'
-import { routes } from './routes/index.route.js'
-import morgan from 'morgan'
-import errorHandler from './middlewares/errorHandler.middlewares.js'
-import cookieParser from 'cookie-parser'
+const express = require("express");
+const cors = require("cors"); 
+const testRoutes = require("./routes/testRoutes");
 
-const app = express()
+const app = express();
 
-app.use(morgan('dev'))
-app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded( { extended: true}))
+app.use(express.json()); 
+app.use(cors());         
 
-// route
-app.use('/api/v1', routes)
-app.use(errorHandler)
+app.use("/api", testRoutes);
 
-app.listen(PORT ,() => {
-    console.log(`Server running on http://${HOSTNAME}:${PORT}`)
-})
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(` Server berjalan di http://localhost:${PORT}`);
+});
