@@ -1,19 +1,22 @@
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
 
-const exampleRoutes = require('./src/routes/example');
+const testRoutes = require("./routes/testRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-const port = 3000;
-
 app.use(express.json());
+app.use(cors());
 
-app.use('/api', exampleRoutes);
+app.use("/api", testRoutes);
+app.use("/api/auth", authRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Halo Dunia! Server Express saya berjalan!');
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server berjalan di http://localhost:${PORT}`);
 });
