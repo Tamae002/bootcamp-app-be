@@ -24,7 +24,7 @@ model User {
   password  String   @db.VarChar(255)
   role      user_role_enum
   gambar    String?  @db.VarChar(255)
-  sessions  Session[]
+  sessions  session[]
   anggota   anggota_kelas[]
   jawaban   jawaban[]
 }
