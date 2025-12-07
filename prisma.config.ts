@@ -13,6 +13,6 @@ export default defineConfig({
     externalTables: true,
   },
   enums: {
-    external: ["user_role_enum", "jawaban_status_enum"],
+    external: [], 
   },
 });

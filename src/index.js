@@ -1,19 +1,28 @@
-const express = require("express");
-const cors = require("cors"); 
-const testRoutes = require("./routes/testRoutes");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import loginRoute from "./src/routes/login.js";
+import profileRoute from "./src/routes/protectedRoute.js";
+import logoutRoute from "./src/routes/logout.js";
 
 const app = express();
 
-app.use(express.json()); 
-app.use(cors());         
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
 
-app.use("/api", testRoutes);
+// Routes
+app.use("/auth", loginRoute);
+app.use("/auth", logoutRoute);
+app.use("/user", profileRoute);
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
+// Default route
+app.get("/", (req, res) => {
+  res.send("API Berjalan 🚀 Silakan tes /auth/login");
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(` Server berjalan di http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server berjalan di http://localhost:${PORT}`));

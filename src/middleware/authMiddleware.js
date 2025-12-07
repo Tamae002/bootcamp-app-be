@@ -1,0 +1,23 @@
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
+
+const prisma = new PrismaClient();
+
+export const authMiddleware = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Tidak ada token, silakan login" });
+
+  try {
+    const decoded = jwt.verify(token, "SECRETKEY");
+    const session = await prisma.session.findFirst({
+      where: { token, userId: decoded.id, isActive: true }
+    });
+
+    if (!session) return res.status(401).json({ message: "Session tidak valid" });
+
+    req.userId = decoded.id;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Token tidak valid" });
+  }
+};

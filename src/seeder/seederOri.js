@@ -52,6 +52,22 @@ async function createUsers(count) {
   return users;
 }
 
+async function createHabibAccount() {
+  const habib = await prisma.user.upsert({
+    where: { email: "habibiarkanuljidan@gmail.com" },
+    update: {},
+    create: {
+      name: "Habib",
+      email: "habibiarkanuljidan@gmail.com",
+      password: bcrypt.hashSync("HabibPass123", 10), // ganti dengan password yang kamu mau
+      role: "user",
+      gambar: null,
+    },
+  });
+  console.log(`Habib account created: ${habib.email} (${habib.user_id})`);
+  return habib;
+}
+
 async function createKelas() {
   const kelasData = [
     {
@@ -140,7 +156,7 @@ async function createAnggotaKelas(users, kelasList) {
   }
 
   for (let data of anggotaData) {
-    const result = await prisma.anggota_Kelas.upsert({
+    const result = await prisma.anggota_kelas.upsert({
       where: {
         user_id_kelas_id: {
           user_id: data.user_id,
@@ -193,6 +209,8 @@ async function main() {
     console.log("Seeding skipped for production environment.");
     return;
   }
+
+  const habib = await createHabibAccount();
 
   const users = await createUsers(2);
 
