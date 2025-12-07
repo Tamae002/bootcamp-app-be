@@ -1,24 +1,29 @@
-const express = require('express');
-const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(); // Idealnya, instance ini dibuat di satu tempat dan di-share
 
 const userController = {
     getAllUsers: async (req, res) => {
-        const users = await prisma.users.findMany();
-        console.log('Fetching all users from database');
-        res.status(200).json(users);
+        try {
+            const users = await prisma.users.findMany();
+            console.log('Fetching all users from database');
+            res.status(200).json(users);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+        }
     },
 
     getUserById: (req, res) => {
         const { id } = req.params;
         console.log(`Fetching user with id: ${id}`);
+        // TODO: Implementasi logika untuk mengambil user dari database
         res.status(200).json({ message: `Endpoint untuk mendapatkan pengguna dengan ID: ${id}` });
     },
 
     createUser: (req, res) => {
         const userData = req.body;
         console.log('Creating a new user with data:', userData);
+        // TODO: Implementasi logika untuk menyimpan user ke database
         res.status(201).json({ message: 'Pengguna berhasil dibuat', data: userData });
     },
 
@@ -36,10 +41,4 @@ const userController = {
     }
 };
 
-router.get('/users', userController.getAllUsers);
-router.post('/users', userController.createUser);
-
-router.put('/users/:id', userController.updateUser); 
-router.delete('/users/:id', userController.deleteUser); 
-
-module.exports = router;
+module.exports = userController;
