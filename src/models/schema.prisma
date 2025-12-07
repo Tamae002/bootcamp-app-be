@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum user_role_enum {
+  admin
+  user
+}
+
+enum jawaban_status_enum {
+  menunggu
+  dinilai
+}
+
+model User {
+  user_id   String   @id @map("user_id") @default(cuid()) @db.VarChar(36)
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  role      user_role_enum
+  gambar    String?  @db.VarChar(255)
+  sessions  session[]
+  anggota   anggota_kelas[]
+  jawaban   jawaban[]
+}
+
+model kelas {
+  kelas_id String @id @map("kelas_id") @default(cuid()) @db.VarChar(36)
+  nama_kelas String @db.VarChar(255)
+  deskripsi String @db.VarChar(255)
+  tanggal_mulai DateTime
+  tanggal_berakhir DateTime
+  pertemuan pertemuan[]
+  anggota anggota_kelas[]
+}
+
+model pertemuan {
+  pertemuan_id String @id @map("pertemuan_id") @default(cuid()) @db.VarChar(36)
+  judul String @db.VarChar(255)
+  deskripsi_tugas String @db.VarChar(255)
+  kelas_id String @map("kelas_id") @db.VarChar(36)
+  tanggal DateTime
+  kelas kelas @relation(fields: [kelas_id], references: [kelas_id])
+  jawaban jawaban[]
+
+  @@unique([kelas_id, judul])
+}
+
+model anggota_kelas {
+  anggota_kelas_id String @id @default(cuid()) @db.VarChar(36)
+  user_id String @map("user_id") @db.VarChar(36)
+  kelas_id String @map("kelas_id") @db.VarChar(36)
+  user User @relation(fields: [user_id], references: [user_id])
+  kelas kelas @relation(fields: [kelas_id], references: [kelas_id])
+  @@unique([user_id, kelas_id])
+}
+
+model jawaban {
+  jawaban_id String @id @map("jawaban_id") @default(cuid()) @db.VarChar(36)
+  pertemuan_id String @map("pertemuan_id") @db.VarChar(36)
+  user_id String @map("user_id") @db.VarChar(36)
+  file_path String @db.VarChar(255)
+  nilai Int @default(0)
+  status jawaban_status_enum
+  pertemuan pertemuan @relation(fields: [pertemuan_id], references: [pertemuan_id])
+  user User @relation(fields: [user_id], references: [user_id])
+  
+  @@unique([pertemuan_id, user_id])
+}
+
+model session {
+  session_id String @id @map("session_id") @default(cuid()) @db.VarChar(36)
+  user_id String @map("user_id") @db.VarChar(36)
+  token String @db.VarChar(255)
+  user User @relation(fields: [user_id], references: [user_id])
+}

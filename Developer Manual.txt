@@ -1,0 +1,30 @@
+Pemisahan yang Jelas: Fungsi utamanya yaitu untuk memisahkan kode yang nantinya kita tulis secara manual dari file-file lain (seperti kode hasil kompilasi), dependensi eksternal (node_modules), file konfigurasi (package.json, tsconfig.json), dan dokumentasi.
+
+Pusat Logika Aplikasi: Semua logika sistem, komponen antarmuka (UI), koneksi ke database, definisi rute API, dan fungsi utilitas berada di dalam direktori ini. Kalau kalian ingin memahami cara kerja aplikasi, src adalah tempat pertama yang harus kalian kunjungi.
+
+Isinya
+
+index.js: Titik masuk (entry point) utama aplikasi.
+routes: Direktori untuk mendefinisikan rute-rute API.
+controllers: Berisi logika untuk menangani permintaan yang masuk ke setiap rute. Intinya memiliki peran Utama sebagai penerima dan pengirim keinginan dari user
+services: Berisi logika yang lebih kompleks atau interaksi dengan layanan eksternal. Fungsi disimpan disini lalu dipanggil ke controllers
+models: Definisi struktur data atau skema database.
+utils: Kumpulan fungsi-fungsi bantuan yang bisa digunakan di berbagai bagian aplikasi. Biasanya tidak digunakan kecuali Service sudah membengkak, fungsinya dipindahkan sedikit kesini agar tidak sulit saat debugging
+middleware: Kode yang menjadi perantara request dan controller
+config: Konfigurasi spesifik aplikasi seperti koneksi database dan kunci API
+
+install tools
+
+1. Node.js
+Ketik: winget install OpenJS.NodeJS.LTS di terminal
+untuk selanjutnya ketik node -v dan npm -v untuk mengecek versi
+
+2. Express.js
+Ketik: npm install express di terminal
+
+3. Prisma
+Ketik: npm install prisma --save-dev di terminal
+Ketik: npx prisma init di terminal untuk menginisialisasi Prisma di proyek kalian
+
+4. Nodemon (opsional, untuk pengembangan)
+Ketik: npm install nodemon --save-dev di terminal
