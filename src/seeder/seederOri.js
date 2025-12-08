@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma.js";
+import { generateUUID } from "../utils/uuid.js";
 const saltRounds = 10;
 
 async function createAdminAccount() {
@@ -109,10 +108,9 @@ async function createPertemuan(kelasList) {
   for (let p of pertemuanData) {
     const result = await prisma.pertemuan.upsert({
       where: {
-        kelas_id_judul: {
+          pertemuan_id: generateUUID(),
           kelas_id: p.kelas_id,
           judul: p.judul
-        }
       },
       update: {},
       create: p,

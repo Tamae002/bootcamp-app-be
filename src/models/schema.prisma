@@ -52,7 +52,7 @@ model pertemuan {
 }
 
 model anggota_kelas {
-  anggota_kelas_id String    @default(cuid()) @db.VarChar(36)
+  anggota_kelas_id String    @default(cuid()) @db.VarChar(36) @id
   user_id          String    @db.VarChar(36)
   kelas_id         String    @db.VarChar(36)
   isActive         Boolean?  @default(true)
@@ -61,7 +61,7 @@ model anggota_kelas {
   kelas            kelas     @relation(fields: [kelas_id], references: [kelas_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_kelas_id_fkey")
   user             user      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_user_id_fkey")
 
-  @@id([user_id, kelas_id], map: "anggota_Kelas_pkey")
+  @@unique([user_id, kelas_id], map: "anggota_Kelas_uniquekey")
 }
 
 model jawaban {
@@ -76,6 +76,8 @@ model jawaban {
   updatedAt    DateTime?            @default(now()) @db.Timestamp(6)
   pertemuan    pertemuan?           @relation(fields: [pertemuan_id], references: [pertemuan_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_pertemuan_id_fkey")
   user         user?                @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_user_id_fkey")
+
+  @@unique([pertemuan_id, user_id], map: "jawaban_uniquekey")
 }
 
 model session {
