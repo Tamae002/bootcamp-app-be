@@ -1,7 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const { generateUUID } = require('../utils/uuid');
-const { hashPassword } = require('../utils/password');
+import prisma from '../config/prisma.js';
+import { generateUUID } from '../utils/uuid.js';
+import { hashPassword } from '../utils/password.js';
 
 async function generateResetTokenForEmail(email) {
   const user = await prisma.user.findUnique({
@@ -13,13 +12,13 @@ async function generateResetTokenForEmail(email) {
   }
 
   const token = generateUUID();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 menit
+  const expires_at = new Date(Date.now() + 15 * 60 * 1000); // 15 menit
 
-  const created = await prisma.resetPasswordToken.create({
+  const created = await prisma.reset_password_token.create({
     data: {
-      userId: user.user_id,   // ✅ gunakan ID dari user
+      user_id: user.user_id,   // ✅ gunakan ID dari user
       token,
-      expiresAt,
+      expires_at,
     },
   });
 
@@ -27,12 +26,12 @@ async function generateResetTokenForEmail(email) {
 }
 
 async function verifyResetToken(token) {
-  const resetToken = await prisma.resetPasswordToken.findUnique({
+  const resetToken = await prisma.reset_password_token.findFirst({
     where: { token },
     include: { user: true },
   });
   if (!resetToken) return null;
-  if (resetToken.expiresAt.getTime() < Date.now()) return null;
+  if (resetToken.expires_at.getTime() < Date.now()) return null;
   return { user: resetToken.user, resetToken };
 }
 
@@ -42,10 +41,10 @@ async function updatePasswordAndDeleteToken(userId, newPasswordPlain, token) {
   // Use transaction to ensure atomicity
   const result = await prisma.$transaction([
     prisma.user.update({
-      where: { id: userId },
+      where: { user_id: userId },
       data: { password: hashed },
     }),
-    prisma.resetPasswordToken.delete({
+    prisma.reset_password_token.delete({
       where: { token },
     }),
   ]);
@@ -53,7 +52,7 @@ async function updatePasswordAndDeleteToken(userId, newPasswordPlain, token) {
   return !!result?.length;
 }
 
-module.exports = {
+export {
   generateResetTokenForEmail,
   verifyResetToken,
   updatePasswordAndDeleteToken,

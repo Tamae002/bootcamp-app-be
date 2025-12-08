@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../config/prisma.js";
 import jwt from "jsonwebtoken";
 
-const prisma = new PrismaClient();
 
 export const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;

@@ -1,9 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import loginRoute from "./src/routes/login.js";
-import profileRoute from "./src/routes/protectedRoute.js";
-import logoutRoute from "./src/routes/logout.js";
+import { routes } from "./routes/index.routes.js";
 
 const app = express();
 
@@ -14,11 +12,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
-app.use("/auth", loginRoute);
-app.use("/auth", logoutRoute);
-app.use("/user", profileRoute);
-
+app.use('/api', routes)
 // Default route
 app.get("/", (req, res) => {
   res.send("API Berjalan 🚀 Silakan tes /auth/login");
