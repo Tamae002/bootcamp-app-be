@@ -1,59 +1,73 @@
-import prisma from "../../config/prisma.js";
+import {
+  createUserService,
+  getUserByIdService,
+  getAllUsersService,
+  getMeService,
+  updateUserService,
+  deleteUserService,
+} from '../../services/users/user.service.js';
 
-const getAllUsers = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
-    const users = await prisma.user.findMany({
-      select: {
-        user_id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-    res.json({ success: true, data: users });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
+    const user = await createUserService(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    res.status(400).json({ error: error.message });
   }
 };
 
-const getAllKelas = async (req, res) => {
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+  const user = await getUserByIdService(id);
+
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
+};
+
+export const getAllUsers = async (req, res) => {
+  const { page, limit } = req.query;
+  const result = await getAllUsersService({ page, limit });
+  res.json(result);
+};
+
+export const getMe = async (req, res) => {
+  const user = await getMeService(req.userId); // dari middleware
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
+};
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
   try {
-    const kelas = await prisma.kelas.findMany({
-      select: {
-        kelas_id: true,
-        nama_kelas: true,
-        deskripsi: true,
-        tanggal_mulai: true,
-        tanggal_berakhir: true,
-      },
-    });
-    res.json({ success: true, data: kelas });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
+    const user = await updateUserService(id, req.body);
+    res.json(user);
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (error.code === 'P2002') {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    res.status(400).json({ error: error.message });
   }
 };
 
-const getPertemuanByKelas = async (req, res) => {
-  const { kelasId } = req.params;
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
   try {
-    const pertemuan = await prisma.pertemuan.findMany({
-      where: { kelas_id: kelasId },
-      select: {
-        pertemuan_id: true,
-        judul: true,
-        deskripsi_tugas: true,
-        tanggal: true,
-      },
-    });
-    res.json({ success: true, data: pertemuan });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
+    await deleteUserService(id);
+    res.status(204).send();
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(500).json({ error: error.message });
   }
-};
-
-module.exports = {
-  getAllUsers,
-  getAllKelas,
-  getPertemuanByKelas,
 };

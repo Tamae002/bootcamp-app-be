@@ -1,0 +1,92 @@
+import prisma from '../../config/prisma.js';
+
+const sanitizeUser = (user) => {
+  const { password, ...safe } = user;
+  return safe;
+};
+
+export const createUserService = async (data) => {
+  const { email, password, role, name, gambar } = data;
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password,
+      role,
+      name,
+      gambar,
+    },
+  });
+  return sanitizeUser(user);
+};
+
+export const getUserByIdService = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: { user_id: id },
+  });
+  if (!user) return null;
+  return sanitizeUser(user);
+};
+
+export const getAllUsersService = async ({ page = 1, limit = 10 }) => {
+  const skip = (page - 1) * limit;
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        user_id: true,
+        name: true,
+        email: true,
+        role: true,
+        gambar: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.user.count(),
+  ]);
+
+  return {
+    users,
+    meta: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+export const getMeService = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { user_id: userId },
+  });
+  if (!user) return null;
+  return sanitizeUser(user);
+};
+
+export const updateUserService = async (id, data) => {
+  const { email, password, role, name, gambar, isActive } = data;
+
+  const user = await prisma.user.update({
+    where: { user_id: id },
+    data: {
+      ...(email !== undefined && { email }),
+      ...(password !== undefined && { password }),
+      ...(role !== undefined && { role }),
+      ...(name !== undefined && { name }),
+      ...(gambar !== undefined && { gambar }),
+      ...(isActive !== undefined && { isActive }),
+    },
+  });
+  return sanitizeUser(user);
+};
+
+export const deleteUserService = async (id) => {
+  await prisma.user.delete({
+    where: { user_id: id },
+  });
+};

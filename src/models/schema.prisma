@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../../generated/prisma"
+  output   = "../../generated/prisma"
 }
 
 datasource db {
@@ -10,8 +10,8 @@ datasource db {
 
 model user {
   user_id              String                 @id(map: "User_pkey") @default(cuid()) @db.VarChar(36)
-  name                 String                 @db.VarChar(255)
-  email                String                 @db.VarChar(255) @unique
+  name                 String?                @db.VarChar(255)
+  email                String                 @db.VarChar(255)
   password             String                 @db.VarChar(255)
   role                 user_role_enum
   gambar               String?                @db.VarChar(255)
@@ -52,7 +52,7 @@ model pertemuan {
 }
 
 model anggota_kelas {
-  anggota_kelas_id String    @default(cuid()) @db.VarChar(36) @id
+  anggota_kelas_id String    @default(cuid()) @db.VarChar(36)
   user_id          String    @db.VarChar(36)
   kelas_id         String    @db.VarChar(36)
   isActive         Boolean?  @default(true)
@@ -61,11 +61,11 @@ model anggota_kelas {
   kelas            kelas     @relation(fields: [kelas_id], references: [kelas_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_kelas_id_fkey")
   user             user      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_user_id_fkey")
 
-  @@unique([user_id, kelas_id], map: "anggota_Kelas_uniquekey")
+  @@id([user_id, kelas_id], map: "anggota_Kelas_pkey")
 }
 
 model jawaban {
-  jawaban_id   String               @id(map: "Jawaban_pkey") @default(cuid()) @map("Jawaban_id") @db.VarChar(36)
+  jawaban_id   String               @id @default(cuid()) @db.VarChar(36)
   pertemuan_id String?              @db.VarChar(36)
   user_id      String?              @db.VarChar(36)
   file_path    String?              @db.VarChar(255)
@@ -76,8 +76,6 @@ model jawaban {
   updatedAt    DateTime?            @default(now()) @db.Timestamp(6)
   pertemuan    pertemuan?           @relation(fields: [pertemuan_id], references: [pertemuan_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_pertemuan_id_fkey")
   user         user?                @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_user_id_fkey")
-
-  @@unique([pertemuan_id, user_id], map: "jawaban_uniquekey")
 }
 
 model session {
@@ -91,11 +89,11 @@ model session {
 }
 
 model reset_password_token {
-  id_rp_token String   @id @db.VarChar(36) @default(cuid())
-  user_id     String   @db.VarChar(36)
-  token       String   @db.VarChar(255) @unique
+  id_rp_token String   @id @default(cuid()) @db.VarChar(36)
+  id_user     String   @db.VarChar(36)
+  token       String   @db.VarChar(255)
   expires_at  DateTime @db.Timestamp(6)
-  user        user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+  user        user     @relation(fields: [id_user], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
 }
 
 enum user_role_enum {
