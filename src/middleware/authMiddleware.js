@@ -7,7 +7,7 @@ export const authMiddleware = async (req, res, next) => {
   if (!token) return res.status(401).json({ message: "Tidak ada token, silakan login" });
 
   try {
-    const decoded = jwt.verify(token, "SECRETKEY");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const session = await prisma.session.findFirst({
       where: { token, userId: decoded.id, isActive: true }
     });
