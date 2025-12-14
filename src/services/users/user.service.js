@@ -60,7 +60,7 @@ export const getAllUsersService = async ({ page = 1, limit = 10 }) => {
   };
 };
 
-export const getMeService = async (userId) => {
+export const getUserMeService = async (userId) => {
   const user = await prisma.user.findUnique({
     where: { user_id: userId },
   });

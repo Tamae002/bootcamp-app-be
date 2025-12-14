@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
-import jawabanRoutes from './jawaban.routes.js'; // ← tambahkan ini
+import jawabanRoutes from './jawaban.routes.js';
+import dashboardRoutes from './dashboard.routes.js';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/user', userRoutes);
-router.use('/jawaban', jawabanRoutes); // ← daftarkan
+router.use('/jawaban', jawabanRoutes); 
+router.use('/dashboard', dashboardRoutes); 
 
-export default router; // ✅ export router gabungan
+export default router;

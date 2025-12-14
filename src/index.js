@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -12,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(routes); // ← tanpa /api
+app.use(routes);
 
 // Default route
 app.get("/", (req, res) => {

@@ -24,7 +24,7 @@ export const loginController = async (req, res) => {
     // Simpan session di DB
     await prisma.session.upsert({
       where: {
-        session_id: user.sessions?.[0]?.session_id || null,
+        session_id: user.sessions?.[0]?.session_id || '-',
       },
       create: {
         user_id: user.user_id,

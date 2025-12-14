@@ -2,7 +2,7 @@ import {
   createUserService,
   getUserByIdService,
   getAllUsersService,
-  getMeService,
+  getUserMeService,
   updateUserService,
   deleteUserService,
 } from '../../services/users/user.service.js';
@@ -35,8 +35,8 @@ export const getAllUsers = async (req, res) => {
   res.json(result);
 };
 
-export const getMe = async (req, res) => {
-  const user = await getMeService(req.userId); // dari middleware
+export const getUserMe = async (req, res) => {
+  const user = await getUserMeService(req.userId); // dari middleware
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
