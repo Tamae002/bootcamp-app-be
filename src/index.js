@@ -11,7 +11,7 @@ import fs from "fs";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.CORS_BYPASS?.split(",") || "http://localhost:3000",
   credentials: true
 }));
 app.use(express.json());
