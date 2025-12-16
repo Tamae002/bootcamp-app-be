@@ -9,8 +9,20 @@ import {
 
 export const createUser = async (req, res) => {
   try {
+
+const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password minimal 8 karakter' });
+    }
+
     const user = await createUserService(req.body);
     res.status(201).json(user);
+
   } catch (error) {
     if (error.code === 'P2002') {
       return res.status(409).json({ error: 'Email already exists' });
@@ -45,7 +57,13 @@ export const getUserMe = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const { id } = req.params;
+  const { password } = req.body;
+
   try {
+    if (password !== undefined && password.length < 8) {
+      return res.status(400).json({ error: 'Password minimal 8 karakter' });
+    }
+
     const user = await updateUserService(id, req.body);
     res.json(user);
   } catch (error) {
