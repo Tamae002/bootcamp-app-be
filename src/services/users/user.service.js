@@ -1,4 +1,7 @@
+import bcrypt from 'bcrypt';
 import prisma from '../../config/prisma.js';
+
+const saltRounds = 10;
 
 const sanitizeUser = (user) => {
   const { password, ...safe } = user;
@@ -8,10 +11,12 @@ const sanitizeUser = (user) => {
 export const createUserService = async (data) => {
   const { email, password, role, name, gambar } = data;
 
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
   const user = await prisma.user.create({
     data: {
       email,
-      password,
+      password: hashedPassword,
       role,
       name,
       gambar,
@@ -71,18 +76,24 @@ export const getUserMeService = async (userId) => {
 export const updateUserService = async (id, data) => {
   const { email, password, role, name, gambar, isActive } = data;
 
-  const user = await prisma.user.update({
-    where: { user_id: id },
-    data: {
+  // Passwordnya di hash dulu
+  let updatedData = {
       ...(email !== undefined && { email }),
-      ...(password !== undefined && { password }),
       ...(role !== undefined && { role }),
       ...(name !== undefined && { name }),
       ...(gambar !== undefined && { gambar }),
       ...(isActive !== undefined && { isActive }),
-    },
+    };
+
+    if (password !== undefined) {
+    updatedData.password = await bcrypt.hash(password, saltRounds);
+  }
+  
+  const user = await prisma.user.update({
+    where: { user_id: id },
+    data: updatedData,
   });
-  return sanitizeUser(user);
+return sanitizeUser(user);
 };
 
 export const deleteUserService = async (id) => {
