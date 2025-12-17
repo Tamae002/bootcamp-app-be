@@ -33,7 +33,8 @@ export const loginController = async (req, res) => {
         isActive: true
       },
       update: {
-        token: token
+        token: token,
+        isActive: true,
       }
     });
 
