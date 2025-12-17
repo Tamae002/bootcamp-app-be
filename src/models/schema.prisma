@@ -44,6 +44,7 @@ model pertemuan {
   judul           String    @db.VarChar(255)
   tanggal         DateTime  @db.Timestamp(6)
   deskripsi_tugas String?   @db.VarChar(255)
+  link_lampiran    String?   @db.VarChar(255) 
   isActive        Boolean?  @default(true)
   createdAt       DateTime? @default(now()) @db.Timestamp(6)
   updatedAt       DateTime? @default(now()) @db.Timestamp(6)

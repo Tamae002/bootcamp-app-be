@@ -9,12 +9,13 @@ import {
 // CREATE
 export async function createPertemuanHandler(req, res) {
   try {
-    const { Kelas_id, judul, tanggal, deskripsi_tugas } = req.body;
+    const { Kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
     const pertemuan = await createPertemuan({
       Kelas_id,
       judul,
       tanggal: new Date(tanggal),
       deskripsi_tugas,
+      link_lampiran,
     });
     return res.status(201).json(pertemuan);
   } catch (error) {
@@ -53,12 +54,13 @@ export async function getPertemuanByIdHandler(req, res) {
 export async function updatePertemuanHandler(req, res) {
   try {
     const { id } = req.params;
-    const { Kelas_id, judul, tanggal, deskripsi_tugas } = req.body;
+    const { Kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
     const pertemuan = await updatePertemuan(id, {
       Kelas_id,
       judul,
       tanggal: tanggal ? new Date(tanggal) : undefined,
       deskripsi_tugas,
+      link_lampiran,
     });
     return res.json(pertemuan);
   } catch (error) {
