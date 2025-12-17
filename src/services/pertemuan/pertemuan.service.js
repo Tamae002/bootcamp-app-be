@@ -33,6 +33,7 @@ export async function getPertemuanById(pertemuan_id) {
           status: true,
           createdAt: true,
         },
+        orderBy: { createdAt: 'desc' }, 
       },
     },
   });
