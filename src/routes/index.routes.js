@@ -4,6 +4,7 @@ import userRoutes from './user.routes.js';
 import jawabanRoutes from './jawaban.routes.js';
 import dashboardRoutes from './dashboard.routes.js';
 import fileRoutes from './file.routes.js';
+import pertemuanRoutes from './pertemuan.routes.js';
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/user', userRoutes);
 router.use('/jawaban', jawabanRoutes); 
 router.use('/dashboard', dashboardRoutes); 
 router.use('/api/file', fileRoutes);
+router.use('/pertemuan', pertemuanRoutes);
 
 export default router;

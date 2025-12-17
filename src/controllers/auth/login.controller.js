@@ -4,6 +4,7 @@ import prisma from "../../config/prisma.js";
 
 export const loginController = async (req, res) => {
   const { email, password } = req.body;
+  const { NODE_ENV } = process.env;
 
   try {
     const user = await prisma.user.findUnique({
@@ -37,7 +38,11 @@ export const loginController = async (req, res) => {
     });
 
     // Kirim token sebagai cookie
-    res.cookie("token", token, { httpOnly: true, sameSite: "lax", secure: false });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: NODE_ENV === "production" || NODE_ENV === "staging",
+      sameSite: NODE_ENV === "development" ? "Lax" : "None",
+    });
 
     res.json({ message: "Login berhasil" });
   } catch (err) {
