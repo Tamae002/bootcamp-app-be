@@ -1,9 +1,21 @@
-// const express = require("express");
-// const router = express.Router();
-// const testController = require("../controllers/testController");
+import { Router } from 'express';
+import {
+  createUser,
+  getUserById,
+  getAllUsers,
+  getUserMe,
+  updateUser,
+  deleteUser,
+} from '../controllers/users/user.controller.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
-// router.get("/users", testController.getAllUsers);
-// router.get("/kelas", testController.getAllKelas);
-// router.get("/pertemuan/:kelasId", testController.getPertemuanByKelas);
+const router = Router();
 
-// module.exports = router;
+router.get('/me', authMiddleware, getUserMe);
+router.post('/', createUser);
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
+export default router;
