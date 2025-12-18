@@ -1,6 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { generateResetTokenForEmail } from "../../services/authResetService.js";
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
 
 // Validasi input
 const forgotPasswordValidation = [
@@ -18,17 +18,28 @@ async function forgotPassword(req, res) {
     }
 
     const { email } = req.body;
+
+    const frontendUrl = process.env.FRONTEND_URL;
+    if (!frontendUrl) {
+      console.error("[CRITICAL] FRONTEND_URL belum diatur di .env");
+      return res.status(500).json({
+        message: "Konfigurasi server tidak lengkap",
+      });
+    }
+
+    // Generate token & simpan ke DB
     const result = await generateResetTokenForEmail(email);
 
     if (!result) {
-      console.log(`[INFO] Email ${email} tidak ditemukan di database`);
+      console.log(`[INFO] Permintaan reset untuk email tidak terdaftar: ${email}`);
       return res.json({
         message: "Jika email terdaftar, link reset password telah dikirim. Periksa inbox Anda.",
       });
     }
 
-    const resetLink = `http://localhost:5000/reset-password/${result.token}`;
+    const resetLink = `${frontendUrl}/reset-password/${result.token}`;
 
+    // Setup transporter email
     const transporter = nodemailer.createTransport({
       host: "smtp.resend.com",
       port: 465,
@@ -39,21 +50,29 @@ async function forgotPassword(req, res) {
       },
     });
 
+    // Kirim email
     try {
       await transporter.sendMail({
         from: "bootcampapps@bootcamp.raihankr.my.id",
         to: email,
-        subject: "Reset Password",
+        subject: "Reset Password Akun Anda",
         html: `
-          <p><b>Reset password</b></p>
-          <p>Klik link berikut untuk mengatur ulang password Anda (berlaku 15 menit):</p>
-          <a href="${resetLink}">${resetLink}</a>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto;">
+            <h2>Permintaan Reset Password</h2>
+            <p>Klik tombol di bawah untuk mengatur ulang password Anda:</p>
+            <a href="${resetLink}" 
+               style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 6px; margin: 16px 0;">
+              Atur Ulang Password
+            </a>
+            <p>Link ini berlaku selama <strong>15 menit</strong>.</p>
+            <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
+          </div>
         `,
       });
 
-      console.log(`[INFO] Email reset dikirim ke ${email}`);
+      console.log(`[SUCCESS] Email reset dikirim ke: ${email}`);
     } catch (emailError) {
-      console.error("[ERROR] Gagal kirim email:", emailError);
+      console.error("[EMAIL ERROR]", emailError.message);
       return res.status(500).json({
         message: "Gagal mengirim email reset password",
       });
@@ -63,8 +82,8 @@ async function forgotPassword(req, res) {
       message: "Jika email terdaftar, link reset password telah dikirim. Periksa inbox Anda.",
     });
   } catch (err) {
-    console.error("Error forgotPassword:", err);
-    return res.status(500).json({ message: "Terjadi kesalahan server" });
+    console.error("[SERVER ERROR] forgotPassword:", err);
+    return res.status(500).json({ message: "Terjadi kesalahan internal" });
   }
 }
 

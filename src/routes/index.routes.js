@@ -1,3 +1,6 @@
+import express from 'express'
+
+import { kelasRoutes } from './kelas.routes.js'
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
@@ -8,6 +11,7 @@ import pertemuanRoutes from './pertemuan.routes.js';
 
 const router = Router();
 
+router.use('/kelas', kelasRoutes)
 router.use('/auth', authRoutes);
 router.use('/user', userRoutes);
 router.use('/jawaban', jawabanRoutes); 
