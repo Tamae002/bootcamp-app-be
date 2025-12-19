@@ -33,12 +33,26 @@ export const getUserByIdService = async (id) => {
   return sanitizeUser(user);
 };
 
-export const getAllUsersService = async ({ page = 1, limit = 10 }) => {
+export const getAllUsersService = async ({ page = 1, limit = 10, search, role } = {}) => {
+  const where = {
+    isActive: true,
+    ...(role && { role }),
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } }
+      ]
+    })
+  };
+
   const skip = (page - 1) * limit;
+  const take = Number(limit);
+
   const [users, total] = await Promise.all([
     prisma.user.findMany({
+      where,
       skip,
-      take: limit,
+      take,
       orderBy: { createdAt: 'desc' },
       select: {
         user_id: true,
@@ -51,16 +65,16 @@ export const getAllUsersService = async ({ page = 1, limit = 10 }) => {
         updatedAt: true,
       },
     }),
-    prisma.user.count(),
+    prisma.user.count({ where }),
   ]);
 
   return {
     users,
     meta: {
       page: Number(page),
-      limit: Number(limit),
+      limit: take,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / take),
     },
   };
 };
