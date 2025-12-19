@@ -42,8 +42,14 @@ export const getUserById = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-  const { page, limit } = req.query;
-  const result = await getAllUsersService({ page, limit });
+  const { page, limit, search, role} = req.query;
+
+  const validroles = ['admin', 'teacher', 'student', 'user'];
+  if (role && !validroles.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+}
+
+const result = await getAllUsersService({ page, limit, search, role });
   res.json(result);
 };
 
