@@ -39,13 +39,18 @@ export const uploadMultipleFiles = async (req, res) => {
   }
 };
 
-export const serveIt = (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(process.cwd(), 'file', filename);
+export const serveIt = (req, res, next) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(process.cwd(), 'file', filename);
 
-  if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
-  } else {
-    return res.status(404).json({ message: 'File not found' });
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    } else {
+      return res.status(404).json({ message: 'File not found' });
+    }
+  } catch (error) {
+    next(error)
   }
+
 };

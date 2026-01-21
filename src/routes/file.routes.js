@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { uploadMultipleFiles } from '../controllers/file.controller.js';
+import { serveIt, uploadMultipleFiles } from '../controllers/file.controller.js';
 import { upload } from '../middleware/file.middleware.js';
 
 const router = Router();
@@ -17,5 +17,7 @@ router.post('/upload', upload.array('files', 10), (req, res) => {
     urls
   });
 });
+
+router.get('/:filename', serveIt)
 
 export default router;
