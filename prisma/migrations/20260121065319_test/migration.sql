@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "user_role_enum" AS ENUM ('admin', 'teacher', 'student', 'user');
+CREATE TYPE "user_role_enum" AS ENUM ('admin', 'mentor', 'user');
 
 -- CreateEnum
 CREATE TYPE "jawaban_status_enum" AS ENUM ('menunggu nilai', 'sudah dinilai', 'menunggu', 'dinilai');
@@ -47,6 +47,7 @@ CREATE TABLE "pertemuan" (
     "judul" VARCHAR(255) NOT NULL,
     "tanggal" TIMESTAMP(6) NOT NULL,
     "deskripsi_tugas" VARCHAR(255),
+    "link_lampiran" VARCHAR(255),
     "isActive" BOOLEAN DEFAULT true,
     "createdAt" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
@@ -111,6 +112,9 @@ CREATE UNIQUE INDEX "Kelas_nama_kelas_unique" ON "kelas"("nama_kelas");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "anggota_Kelas_uniquekey" ON "anggota_kelas"("user_id", "kelas_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "jawaban_uniquekey" ON "jawaban"("pertemuan_id", "user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "reset_password_token_token_key" ON "reset_password_token"("token");

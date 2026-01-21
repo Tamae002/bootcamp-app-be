@@ -101,8 +101,7 @@ model reset_password_token {
 
 enum user_role_enum {
   admin
-  teacher
-  student
+  mentor
   user
 }
 
@@ -111,11 +110,6 @@ enum jawaban_status_enum {
   sudah_dinilai  @map("sudah dinilai")
   menunggu
   dinilai
-}
-
-enum Role {
-  admin
-  user
 }
 
 enum StatusJawaban {

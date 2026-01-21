@@ -30,7 +30,7 @@ const getAnggotaKelas = async (kelas_id, client = prisma) => {
     .map(a => a.user);
 
   const list_peserta = validAnggota
-    .filter(a => ['student', 'user'].includes(a.user.role))
+    .filter(a => ['user'].includes(a.user.role))
     .map(a => a.user);
 
   return { list_mentor, list_peserta };
