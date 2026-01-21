@@ -26,7 +26,7 @@ const getAnggotaKelas = async (kelas_id, client = prisma) => {
   const validAnggota = anggota.filter(a => a.user !== null);
 
   const list_mentor = validAnggota
-    .filter(a => ['admin', 'teacher'].includes(a.user.role))
+    .filter(a => ['admin', 'mentor'].includes(a.user.role))
     .map(a => a.user);
 
   const list_peserta = validAnggota
