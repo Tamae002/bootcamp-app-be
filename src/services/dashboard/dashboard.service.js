@@ -31,7 +31,7 @@ export async function getDashboardStats() {
         take: 5,
         select: {
           kelas_id: true,
-          nama_kelas: true, // ← gunakan nama field yang sesuai skema
+          nama_kelas: true,
         },
       }),
     ]);
