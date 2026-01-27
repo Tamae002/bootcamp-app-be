@@ -8,9 +8,9 @@ import {
 
 // CREATE
 export async function createPertemuanHandler(req, res, next) {
-  const { Kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
+  const { kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
   const pertemuan = await createPertemuan({
-    Kelas_id,
+    kelas_id,
     judul,
     tanggal: new Date(tanggal),
     deskripsi_tugas,
