@@ -1,6 +1,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import 'express-async-errors';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+// import notFound from './middleware/notFound.middlewares.js';
+import errorHandler from './middleware/errorHandler.middlewares.js';
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -17,16 +23,16 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use('/file', express.static(path.join(process.cwd(), 'file')));
 app.use(routes);
 
-// Default route
+// app.use(notFound);
+
+app.use(errorHandler);
+
 app.get("/", (req, res) => {
   res.send("API Berjalan 🚀 Silakan tes /auth/login");
 });

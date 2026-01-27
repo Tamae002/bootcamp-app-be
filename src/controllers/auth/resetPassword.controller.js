@@ -1,20 +1,26 @@
 import bcrypt from 'bcrypt'
 import prisma from "../../config/prisma.js";
 
-async function resetPasswordController(req, res) {
+async function resetPasswordController(req, res, next) {
   const { token } = req.params;
   const { newPassword, confirmPassword } = req.body;
 
   if (!newPassword || !confirmPassword) {
-    return res.status(400).json({ message: "Password baru dan konfirmasi wajib diisi" });
+    const error = new Error("Password baru dan konfirmasi wajib diisi");
+    error.statusCode = 400;
+    throw error;
   }
 
   if (newPassword.length < 6) {
-    return res.status(400).json({ message: "Password baru minimal 6 karakter" });
+    const error = new Error("Password baru minimal 6 karakter");
+    error.statusCode = 400;
+    throw error;
   }
 
   if (newPassword !== confirmPassword) {
-    return res.status(400).json({ message: "Konfirmasi password tidak cocok" });
+    const error = new Error("Konfirmasi password tidak cocok");
+    error.statusCode = 400;
+    throw error;
   }
 
   const resetToken = await prisma.reset_password_token.findFirst({
@@ -22,20 +28,32 @@ async function resetPasswordController(req, res) {
   });
 
   if (!resetToken) {
-    return res.status(404).json({ message: "Token tidak ditemukan" });
+    const error = new Error("Token tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
   }
 
   if (resetToken.expires_at < new Date()) {
-    return res.status(410).json({ message: "Token sudah expired" });
+    const error = new Error("Token sudah expired");
+    error.statusCode = 410;
+    throw error;
   }
 
   const user = await prisma.user.findUnique({
     where: { user_id: resetToken.user_id },
   });
 
+  if (!user) {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+
   const isSame = bcrypt.compareSync(newPassword, user.password);
   if (isSame) {
-    return res.status(400).json({ message: "Password baru tidak boleh sama dengan yang lama" });
+    const error = new Error("Password baru tidak boleh sama dengan yang lama");
+    error.statusCode = 400;
+    throw error;
   }
 
   const hashed = bcrypt.hashSync(newPassword, 10);
@@ -46,9 +64,8 @@ async function resetPasswordController(req, res) {
   });
 
   await prisma.reset_password_token.delete({
-    where: { 
-      user_id: user.user_id,
-      token: token 
+    where: {
+      id: resetToken.id,
     },
   });
 
