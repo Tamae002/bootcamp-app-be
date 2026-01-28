@@ -28,7 +28,7 @@ model kelas {
   kelas_id         String          @id(map: "Kelas_pkey") @default(cuid()) @map("Kelas_id") @db.VarChar(36)
   nama_kelas       String          @unique(map: "Kelas_nama_kelas_unique") @db.VarChar(255)
   gambar           String?         @db.VarChar(255)
-  deskripsi        String?         @db.VarChar(255)
+  deskripsi        String?         @db.Text
   tanggal_mulai    DateTime?       @db.Timestamp(6)
   tanggal_berakhir DateTime?       @db.Timestamp(6)
   isActive         Boolean?        @default(true)
@@ -43,7 +43,7 @@ model pertemuan {
   kelas_id        String?   @db.VarChar(36)
   judul           String    @db.VarChar(255)
   tanggal         DateTime  @db.Timestamp(6)
-  deskripsi_tugas String?   @db.VarChar(255)
+  deskripsi_tugas String?   @db.Text
   link_lampiran    String?   @db.VarChar(255) 
   isActive        Boolean?  @default(true)
   createdAt       DateTime? @default(now()) @db.Timestamp(6)
