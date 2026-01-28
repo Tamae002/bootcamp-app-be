@@ -4,7 +4,7 @@ import {
   getPertemuanById,
   updatePertemuan,
   deletePertemuan,
-} from '../../services/pertemuan/pertemuan.service.js';
+} from '../services/pertemuan.service.js';
 
 // CREATE
 export async function createPertemuanHandler(req, res, next) {

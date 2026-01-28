@@ -1,4 +1,4 @@
-import { beriNilaiJawabanService } from '../../services/jawaban/jawaban.service.js';
+import { beriNilaiJawabanService } from '../services/jawaban.service.js';
 
 export const beriNilaiJawaban = async (req, res, next) => {
   const { jawaban_id } = req.params;

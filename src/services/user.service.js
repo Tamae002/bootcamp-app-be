@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import prisma from '../../config/prisma.js';
+import prisma from '../config/prisma.js';
 
 const saltRounds = 10;
 
@@ -81,10 +81,30 @@ export const getAllUsersService = async ({ page = 1, limit = 10, search, role } 
 
 export const getUserMeService = async (userId) => {
   const user = await prisma.user.findUnique({
-    where: { user_id: userId },
+    where: {
+      user_id: userId,
+    },
+    select: {
+      user_id: true,
+      email: true,
+      name: true,
+      role: true,
+      gambar: true,
+      isActive: true,
+    }
   });
-  if (!user) return null;
-  return sanitizeUser(user);
+
+  // Pisahkan pengecekan user ada atau tidak, dengan pengecekan user aktif atau tidak.
+  // Ini memberikan pesan error yang lebih jelas.
+  if (!user || !user.isActive) {
+    const error = new Error('User not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Hapus properti `isActive` dari objek yang dikembalikan ke controller
+  const { isActive, ...userData } = user;
+  return userData;
 };
 
 export const updateUserService = async (id, data) => {

@@ -5,7 +5,7 @@ import {
   getPertemuanByIdHandler,
   updatePertemuanHandler,
   deletePertemuanHandler,
-} from '../controllers/pertemuan/pertemuan.controller.js';
+} from '../controllers/pertemuan.controller.js';
 
 const router = Router();
 
