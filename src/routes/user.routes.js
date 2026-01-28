@@ -6,7 +6,7 @@ import {
   getUserMe,
   updateUser,
   deleteUser,
-} from '../controllers/users/user.controller.js';
+} from '../controllers/user.controller.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = Router();

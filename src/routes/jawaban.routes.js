@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { beriNilaiJawaban } from '../controllers/jawaban/jawaban.controller.js';
+import { beriNilaiJawaban } from '../controllers/jawaban.controller.js';
 
 const router = Router();
 

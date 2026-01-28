@@ -5,7 +5,7 @@ import {
   getUserMeService,
   updateUserService,
   deleteUserService,
-} from '../../services/users/user.service.js';
+} from '../services/user.service.js';
 
 export const createUser = async (req, res, next) => {
   const { password } = req.body;

@@ -1,4 +1,4 @@
-import prisma from '../../config/prisma.js';
+import prisma from '../config/prisma.js';
 
 // Helper: sanitasi output
 const sanitizeJawaban = (jawaban) => {
