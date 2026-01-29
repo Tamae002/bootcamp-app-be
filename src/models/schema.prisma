@@ -71,7 +71,7 @@ model jawaban {
   user_id      String?              @db.VarChar(36)
   file_path    String?              @db.VarChar(255)
   nilai        Int?                 @db.SmallInt
-  status       jawaban_status_enum? @default(menunggu_nilai)
+  status       status_jawaban       @default(menunggu)
   isActive     Boolean?             @default(true)
   createdAt    DateTime?            @default(now()) @db.Timestamp(6)
   updatedAt    DateTime?            @default(now()) @db.Timestamp(6)
@@ -105,14 +105,7 @@ enum user_role_enum {
   user
 }
 
-enum jawaban_status_enum {
-  menunggu_nilai @map("menunggu nilai")
-  sudah_dinilai  @map("sudah dinilai")
-  menunggu
-  dinilai
-}
-
-enum StatusJawaban {
+enum status_jawaban {
   menunggu
   dinilai
 }

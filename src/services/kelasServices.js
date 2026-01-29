@@ -39,8 +39,14 @@ const getAnggotaKelas = async (kelas_id, client = prisma) => {
 //Create Kelas + Anggota
 export const createKelasWithAnggota = async (data, added_users = []) => {
   return prisma.$transaction(async (tx) => {
-    // Buat kelas
-    const kelas = await tx.kelas.create({ data });
+    const kelasData = {
+          ...data,
+          tanggal_mulai: data.tanggal_mulai ? new Date(data.tanggal_mulai) : null,
+          tanggal_berakhir: data.tanggal_berakhir ? new Date(data.tanggal_berakhir) : null,
+        };
+
+        // Buat kelas
+    const kelas = await tx.kelas.create({ data: kelasData });
 
     // Tambah anggota jika ada
     if (added_users?.length > 0) {
@@ -107,18 +113,42 @@ export const getKelasByIdWithAnggota = async (kelas_id) => {
 //Update Kelas + Manage Anggota (Hard Delete removed_users + jawaban)
 export const updateKelasWithAnggota = async (kelas_id, data, added_users = [], removed_users = []) => {
   return prisma.$transaction(async (tx) => {
+
+       // ✅ Convert tanggal ke DateTime (cuma convert kalo ada)
+    const kelasUpdateData = { ...data };
+    
+    if (kelasUpdateData.tanggal_mulai) {
+      kelasUpdateData.tanggal_mulai = new Date(kelasUpdateData.tanggal_mulai);
+    }
+    
+    if (kelasUpdateData.tanggal_berakhir) {
+      kelasUpdateData.tanggal_berakhir = new Date(kelasUpdateData.tanggal_berakhir);
+    }
+
     // Update kelas
-    const kelas = await tx.kelas.update({ where: { kelas_id }, data });
+        const kelas = await tx.kelas.update({
+      where: { kelas_id: kelas_id },
+      data: kelasUpdateData,
+    });
 
     // Tambah anggota baru
     if (added_users?.length > 0) {
       const anggotaData = added_users.map(user_id => ({
         user_id,
-        kelas_id,
+        kelas_id: kelas_id,
       }));
       await tx.anggota_kelas.createMany({
         data: anggotaData,
         skipDuplicates: true,
+      });
+    }
+
+        if (removed_users?.length > 0) {
+      await tx.anggota_kelas.deleteMany({
+        where: {
+          kelas_id: kelas_id,
+          user_id: { in: removed_users },
+        },
       });
     }
 
