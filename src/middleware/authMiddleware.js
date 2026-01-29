@@ -1,7 +1,6 @@
 import prisma from "../config/prisma.js";
 import jwt from "jsonwebtoken";
 
-
 export const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: "Tidak ada token, silakan login" });
@@ -13,10 +12,6 @@ export const authMiddleware = async (req, res, next) => {
     });
 
     if (!session) return res.status(401).json({ message: "Session tidak valid" });
-
-    console.log('test1', decoded)
-    console.log('test2', session)
-    console.log('test3', token)
 
     req.userId = decoded.id;
     next();
