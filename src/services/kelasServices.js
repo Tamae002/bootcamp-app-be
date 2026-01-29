@@ -135,7 +135,7 @@ export const updateKelasWithAnggota = async (kelas_id, data, added_users = [], r
     if (added_users?.length > 0) {
       const anggotaData = added_users.map(user_id => ({
         user_id,
-        kelas_id: id,
+        kelas_id: kelas_id,
       }));
       await tx.anggota_kelas.createMany({
         data: anggotaData,
@@ -146,7 +146,7 @@ export const updateKelasWithAnggota = async (kelas_id, data, added_users = [], r
         if (removed_users?.length > 0) {
       await tx.anggota_kelas.deleteMany({
         where: {
-          kelas_id: id,
+          kelas_id: kelas_id,
           user_id: { in: removed_users },
         },
       });
