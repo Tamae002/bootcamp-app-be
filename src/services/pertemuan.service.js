@@ -47,10 +47,9 @@ export async function updatePertemuan(pertemuan_id, data) {
   });
 }
 
-// DELETE (soft delete)
+// DELETE
 export async function deletePertemuan(pertemuan_id) {
-  return prisma.pertemuan.update({
-    where: { pertemuan_id, isActive: true },
-    data: { isActive: false },
+  return prisma.pertemuan.delete({
+    where: { pertemuan_id: pertemuan_id},
   });
 }
