@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import routes from './routes/index.routes.js';
 import https from "https";
 import fs from "fs";
+import axios from 'axios';
+import * as cheerio  from 'cheerio';
 
 // Import Middleware
 import errorHandler from './middleware/errorHandler.middlewares.js';
@@ -20,6 +22,54 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './docs/index.js';
 
 const app = express();
+
+const extractMetadata = (html, url) => {
+  const $ = cheerio.load(html);
+  
+  // Extract Open Graph tags (preferred by most sites)
+  const metadata = {
+    url: url,
+    title: 
+      $('meta[property="og:title"]').attr('content') ||
+      $('meta[name="twitter:title"]').attr('content') ||
+      $('title').text() ||
+      '',
+    description:
+      $('meta[property="og:description"]').attr('content') ||
+      $('meta[name="twitter:description"]').attr('content') ||
+      $('meta[name="description"]').attr('content') ||
+      '',
+    image:
+      $('meta[property="og:image"]').attr('content') ||
+      $('meta[name="twitter:image"]').attr('content') ||
+      $('link[rel="image_src"]').attr('href') ||
+      '',
+    siteName:
+      $('meta[property="og:site_name"]').attr('content') ||
+      new URL(url).hostname,
+    favicon:
+      $('link[rel="icon"]').attr('href') ||
+      $('link[rel="shortcut icon"]').attr('href') ||
+      `${new URL(url).origin}/favicon.ico`
+  };
+
+  // Make image URL absolute if it's relative
+  if (metadata.image && !metadata.image.startsWith('http')) {
+    const urlObj = new URL(url);
+    metadata.image = metadata.image.startsWith('/')
+      ? `${urlObj.origin}${metadata.image}`
+      : `${urlObj.origin}/${metadata.image}`;
+  }
+
+  return metadata;
+};
+
+/**
+ * GET /api/link-preview?url=<URL>
+ * Fetches metadata for a given URL
+ */
+
+
 
 // Debug Swagger Spec
 if (process.env.NODE_ENV !== 'production') {
@@ -83,6 +133,43 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use('/file', express.static(path.join(process.cwd(), 'file')));
+app.get('/link-preview', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({ error: 'URL parameter is required' });
+  }
+
+  // Validate URL
+  try {
+    new URL(url);
+  } catch (error) {
+    return res.status(400).json({ error: 'Invalid URL format' });
+  }
+
+  try {
+    // Fetch the webpage
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0)',
+      },
+      timeout: 10000, // 10 second timeout
+      maxRedirects: 5,
+    });
+
+    // Extract metadata
+    const metadata = extractMetadata(response.data, url);
+
+    // Cache the result (optional - add Redis/memory cache here)
+    res.json(metadata);
+  } catch (error) {
+    console.error('Error fetching link preview:', error.message);
+    res.status(500).json({
+      error: 'Failed to fetch link preview',
+      message: error.message,
+    });
+  }
+});
 app.use(routes);
 
 // app.use(notFound);
