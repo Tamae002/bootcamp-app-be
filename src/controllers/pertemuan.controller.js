@@ -55,7 +55,7 @@ export async function updatePertemuanHandler(req, res, next) {
 export async function deletePertemuanHandler(req, res, next) {
   const { id } = req.params;
   await deletePertemuan(id);
-  return res.status(204).json({
+  return res.status(200).json({
     success: true,
     message: 'Pertemuan berhasil dihapus',
   }); // No Content
