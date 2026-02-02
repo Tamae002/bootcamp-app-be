@@ -8,6 +8,6 @@ const router = Router();
 
 router.patch('/:jawaban_id/nilai', authMiddleware, checkRole(["mentor"]), beriNilaiJawaban);
 router.post('/:pertemuan_id', authMiddleware, checkRole(["user"]), createJawaban);
-router.get('/:pertemuan_id', authMiddleware, checkRole(["admin", "mentor"]),getJawabanByPertemuan);
+router.get('/:pertemuan_id', authMiddleware, checkRole(["admin", "mentor"]), getJawabanByPertemuan);
 
 export default router;

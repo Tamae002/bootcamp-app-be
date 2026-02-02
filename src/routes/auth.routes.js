@@ -6,8 +6,8 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = Router();
 
 router.post('/login', loginController);
-router.get('/logout', authMiddleware, logoutController);
-router.post('/forgot-password', authMiddleware, forgotPasswordValidation, forgotPassword);
-router.post('/reset-password/:token', authMiddleware, resetPasswordController);
+router.get('/logout', logoutController);
+router.post('/forgot-password', forgotPasswordValidation, forgotPassword);
+router.post('/reset-password/:token', resetPasswordController);
 
 export default router; 
