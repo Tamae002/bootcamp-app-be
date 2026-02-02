@@ -7,13 +7,13 @@ export async function getDashboardStats() {
     await Promise.all([
       prisma.user.count({
         where: {
-          role: 'mentor',
+          role: 'user',
           isActive: true,
         },
       }),
       prisma.user.count({
         where: {
-          role: 'user',
+          role: 'mentor',
           isActive: true,
         },
       }),
