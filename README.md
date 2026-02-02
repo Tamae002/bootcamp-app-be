@@ -18,21 +18,21 @@ Pastikan sudah terinstall di sistem Anda:
 Step 1: Clone Repository dari GitHub
 Buka terminal/command prompt, lalu jalankan:
 
-bash
+```bash
 git clone https://github.com/Tamae002/bootcamp-app-be.git
-
+```
 Masuk ke folder project:
 
-bash
+```bash
 cd bootcamp-app-be
-
+```
 Step 2: Install Dependencies
 
 Install semua package yang dibutuhkan:
 
-bash
+```bash
 npm install
-
+```
 Proses ini akan menginstall semua dependencies yang terdaftar di package.json. Tunggu hingga selesai.
 
 Step 3: Setup Environment Variables
@@ -40,13 +40,13 @@ Step 3: Setup Environment Variables
 Buat file .env dari template yang sudah ada:
 
 Untuk Windows:
-bash
+```bash
 copy .env.example .env
-
+```
 Untuk Linux/Mac:
-bash
+```bash
 cp .env.example .env
-
+```
 Edit file .env yang baru dibuat. Sesuaikan dengan konfigurasi Anda:
 
 dotenv
@@ -56,22 +56,17 @@ HOSTNAME=localhost
 
 NODE_ENV=development
 
-DATABASE_URL="postgresql://postgres:jordan@localhost:5432/bootcamp_geek?schema=public"
+DATABASE_URL="postgresql://postgres:(password)@(hostname):(port)/(database)?schema=public"
 
-JWT_SECRET=apaaja
+JWT_SECRET=examplejwtsecret
 
 ADMIN_EMAIL=admin@example.com
 
-ADMIN_PASSWORD=secret123
+ADMIN_PASSWORD=passwordexample
 
-USER_PW_PREFIX=userpw_
+USER_PW_PREFIX=userpwexample
 
 FRONTEND_URL=http://localhost:5173
-
-Catatan Penting:
-- Ganti jordan dengan password PostgreSQL Anda
-- Pastikan database bootcamp_geek sudah ada di PostgreSQL
-- Jika port PostgreSQL Anda berbeda dari 5432, sesuaikan di DATABASE_URL
 
 Step 4: Verifikasi Koneksi Database
 
@@ -80,9 +75,9 @@ Sebelum melanjutkan, pastikan PostgreSQL sudah running dan database bootcamp_gee
 Cara mengecek database:
 
 1. Buka terminal PostgreSQL:
-   bash
+   ```bash
    psql -U postgres
-   
+   ```
 2. Masukkan password Anda (jordan)
 
 3. Cek daftar database:
@@ -102,44 +97,37 @@ Step 5: Setup Prisma (Database Schema)
 Prisma adalah ORM yang digunakan aplikasi ini. Jalankan perintah berikut untuk setup database schema:
 
 Generate Prisma Client:
-bash
+```bash
 npx prisma generate
-
+```
 Jalankan Migration (membuat tabel di database):
-bash
+```bash
 npx prisma migrate dev
-
+```
 Jika diminta memberi nama migration, ketik nama yang deskriptif seperti: init atau initial_setup
 
 Alternatif - Push Schema (tanpa migration files):
-bash
+```bash
 npx prisma db push
-
+```
 Step 6: Seed Database (Opsional)
 
 Jika aplikasi memiliki seed data untuk mengisi database awal, jalankan:
 
-bash
+```bash
 npx prisma db seed
-
+```
 Catatan: Jika terjadi error bahwa seed tidak dikonfigurasi, skip step ini. Anda bisa mengisi data manual nanti.
-
-Step 7: Verifikasi Setup
-
-Cek apakah Prisma Client sudah ter-generate dengan baik:
-
-bash
-npx prisma studio
 
 Perintah ini akan membuka Prisma Studio di browser (biasanya http://localhost:5555), dimana Anda bisa melihat tabel dan data di database.
 
-Step 8: Jalankan Development Server
+Step 7: Jalankan Development Server
 
 Saatnya menjalankan aplikasi backend:
 
-bash
+```bash
 npm run dev
-
+```
 Jika berhasil, Anda akan melihat pesan seperti:
 
 Server running on http://localhost:3000
@@ -194,31 +182,30 @@ Solusi:
 
 📝 Perintah-Perintah Penting
 
-bash
 Install dependencies
+```bash 
 npm install
-
+```
 Jalankan development server
+```bash
 npm run dev
-
+```
 Generate Prisma Client
+```bash
 npx prisma generate
-
+```
 Jalankan migration
+```bash
 npx prisma migrate dev
-
+```
 Push schema ke database (tanpa migration)
+```bash
 npx prisma db push
-
-Buka Prisma Studio (GUI database)
-npx prisma studio
-
-Format Prisma schema
-npx prisma format
-
+``` 
 Reset database (HATI-HATI: menghapus semua data)
+```bash
 npx prisma migrate reset
-
+```
  🗂️ Struktur Project
 
 bootcamp-app-be/
