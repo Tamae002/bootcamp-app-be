@@ -19,7 +19,8 @@ export const checkRole = (allowedRoles) => {
       }
 
       // Fallback: if not authenticated yet, verify token and session here
-      const token = req.cookies['token']?.split(' ')?.[1]
+      const token = req.cookies['token']
+      console.log(token)
       if (!token) {
         const err = new Error('Unauthorized. please login to access this resources.')
         err.statusCode = 401
@@ -28,9 +29,9 @@ export const checkRole = (allowedRoles) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-      const session = await prisma.session.findUnique({ where: { id_session: decoded.id_session } })
+      const session = await prisma.session.findFirst({ where: { user_id: decoded.id } })
       if (!session || !session.isActive || token !== session.token) {
-        const err = new Error('Unauthorized. please login to access this resources.')
+        const err = new Error('Unauthorized. please login to access this resourcess.')
         err.statusCode = 401
         throw err
       }
@@ -43,11 +44,12 @@ export const checkRole = (allowedRoles) => {
       }
 
       // attach decoded token to request for downstream handlers if needed
-      req.auth = decoded
-      req.token = token
+      // req.auth = decoded
+      // req.token = token
 
       next()
     } catch (error) {
+      console.error('Error in checkRole middleware:', error)  
       // if error already has statusCode, forward it; otherwise 401
       const err = error?.statusCode ? error : new Error('Unauthorized. please login to access this resources.')
       if (!err.statusCode) err.statusCode = 401

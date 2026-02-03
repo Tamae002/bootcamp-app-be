@@ -99,7 +99,7 @@ export const loginController = async (req, res, next) => {
     throw error;
   }
 
-  const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = jwt.sign({ id: user.user_id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
   // Simpan session di DB
   await prisma.session.upsert({
