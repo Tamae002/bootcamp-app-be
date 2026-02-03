@@ -67,15 +67,31 @@ export const createKelasWithAnggota = async (data, added_users = []) => {
   });
 };
 
-//Get All Kelas (tanpa filter isActive)
-export const getAllKelas = async ({ page = 1, limit = 10 }) => {
+//Get All Kelas (admin = semua, mentor = hanya kelas yang diikuti)
+export const getAllKelas = async ({ page = 1, limit = 10, role, user_id }) => {
   const skip = (page - 1) * limit;
-  const total = await prisma.kelas.count();
-  const data = await prisma.kelas.findMany({
-    skip,
-    take: limit,
-    orderBy: { createdAt: 'desc' },
-  });
+
+  // kalau mentor, filter hanya kelas yang dia ikuti
+  const whereFilter = role === 'mentor'
+    ? {
+        anggota: {
+          some: {
+            user_id: user_id,
+          },
+        },
+      }
+    : {}; // admin tidak ada filter, lihat semua
+
+  const [total, data] = await Promise.all([
+    prisma.kelas.count({ where: whereFilter }),
+    prisma.kelas.findMany({
+      where: whereFilter,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
 
   const totalPages = Math.ceil(total / limit);
   const currentPage = parseInt(page);

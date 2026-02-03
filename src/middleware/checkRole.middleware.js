@@ -44,8 +44,8 @@ export const checkRole = (allowedRoles) => {
       }
 
       // attach decoded token to request for downstream handlers if needed
-      // req.auth = decoded
-      // req.token = token
+      req.auth = decoded
+      req.token = token
 
       next()
     } catch (error) {
