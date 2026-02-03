@@ -16,7 +16,15 @@ export const createKelas = async (req, res, next) => {
 // Get all
 export const getAllKelas = async (req, res, next) => {
   const { page = 1, limit = 10 } = req.query;
-  const result = await getAllKelasService({ page: parseInt(page), limit: parseInt(limit) }); 
+  const { id: user_id, role } = req.auth; // ambil user_id dan role dari token
+
+  const result = await getAllKelasService({
+    page: parseInt(page),
+    limit: parseInt(limit),
+    role,
+    user_id,
+  });
+
   return res.status(200).json({ success: true, ...result });
 };
 
