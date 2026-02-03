@@ -2,7 +2,6 @@ import { uploadFileService } from '../services/file.service.js';
 import path from 'path';
 import fs from 'fs';
 
-
 export const uploadFile = async (req, res, next) => {
   if (!req.file) {
     const error = new Error('No file uploaded');

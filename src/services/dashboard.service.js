@@ -38,20 +38,27 @@ export async function getDashboardStats() {
         select: {
           kelas_id: true,
           nama_kelas: true,
-          _count: {
-            select: {
-              anggota: true, // Menghitung jumlah record di anggota_kelas
+          anggota: {
+            select: {          // pastikan ini select, bukan include
+              user: {
+                select: {      // tidak ada where di sini
+                  user_id: true,
+                  role: true,
+                },
+              },
             },
           },
         },
       }),
     ]);
 
- const formattedKelasAktif = kelasAktif.map((kelas) => ({
-    kelas_id: kelas.kelas_id,
-    nama_kelas: kelas.nama_kelas,
-    total_peserta: kelas._count.anggota, // Total peserta dari relasi anggota_kelas
-  }));
+console.log(JSON.stringify(kelasAktif, null, 2)); // debug
+
+const formattedKelasAktif = kelasAktif.map((kelas) => ({
+  kelas_id: kelas.kelas_id,
+  nama_kelas: kelas.nama_kelas,
+  total_peserta: kelas.anggota.filter((a) => a.user?.role === 'user').length,
+}));
 
   return {
     jumlah_peserta: jumlahPeserta,
