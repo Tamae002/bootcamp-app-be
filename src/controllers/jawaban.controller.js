@@ -12,12 +12,13 @@ export const beriNilaiJawaban = async (req, res, next) => {
 export const createJawaban = async (req, res, next) => {
   try {
     const { pertemuan_id } = req.params;
+
     const { jawaban } = req.body; // bisa array atau object
     const user_id = req.userId;
-
+    const { file_path, deskripsi } = req.body;
     console.log(jawaban)
 
-    const result = await createJawabanService(jawaban, pertemuan_id, user_id);
+    const result = await createJawabanService({ file_path, deskripsi }, pertemuan_id, user_id);
     
     res.status(201).json({ 
       success: true, 

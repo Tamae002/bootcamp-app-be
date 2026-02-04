@@ -4,6 +4,7 @@ import {
   getUserById,
   getAllUsers,
   getUserMe,
+  getUserKelas,
   updateUser,
   deleteUser,
 } from '../controllers/user.controller.js';
@@ -12,6 +13,7 @@ import checkRole from '../middleware/checkRole.middleware.js';
 
 const router = Router();
 
+router.get('/me/kelas', authMiddleware, getUserKelas);
 router.get('/me', authMiddleware, getUserMe);
 router.post('/', checkRole(['mentor', 'admin']), createUser);
 router.get('/', getAllUsers);

@@ -5,6 +5,7 @@ import {
   getUserMeService,
   updateUserService,
   deleteUserService,
+  getUserKelasService, 
 } from '../services/user.service.js';
 
 export const createUser = async (req, res, next) => {
@@ -80,4 +81,17 @@ export const deleteUser = async (req, res, next) => {
   const { id } = req.params;
   await deleteUserService(id);
   res.status(204).send();
+};
+
+export const getUserKelas = async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+  const user_id = req.userId; // dari middleware authMiddleware
+
+  const result = await getUserKelasService({
+    page: parseInt(page),
+    limit: parseInt(limit),
+    user_id,
+  });
+
+  res.json({ success: true, ...result });
 };
