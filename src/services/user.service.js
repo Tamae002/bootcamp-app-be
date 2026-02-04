@@ -135,3 +135,44 @@ export const deleteUserService = async (id) => {
     where: { user_id: id },
   });
 };
+
+// Get Daftar Kelas yang diikuti oleh user (role: user)
+export const getUserKelasService = async ({ page = 1, limit = 10, user_id }) => {
+  const skip = (page - 1) * limit;
+
+  const whereFilter = {
+    anggota: {
+      some: {
+        user_id: user_id,
+        user: {
+          role: 'user', // pastikan hanya user biasa
+        },
+      },
+    },
+  };
+
+  const [total, data] = await Promise.all([
+    prisma.kelas.count({ where: whereFilter }),
+    prisma.kelas.findMany({
+      where: whereFilter,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = parseInt(page);
+  const hasNextPage = currentPage < totalPages;
+
+  return {
+    data,
+    meta: {
+      total,
+      page: currentPage,
+      lastPage: totalPages,
+      limit: parseInt(limit),
+      has_next_page: hasNextPage,
+    },
+  };
+};

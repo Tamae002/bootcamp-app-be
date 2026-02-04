@@ -70,6 +70,7 @@ model jawaban {
   pertemuan_id String?              @db.VarChar(36)
   user_id      String?              @db.VarChar(36)
   file_path    String?              @db.VarChar(255)
+  deskripsi    String?  @db.Text          
   nilai        Int?                 @db.SmallInt
   status       status_jawaban       @default(menunggu)
   isActive     Boolean?             @default(true)
