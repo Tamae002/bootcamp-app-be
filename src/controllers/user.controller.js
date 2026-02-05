@@ -43,14 +43,12 @@ export const getAllUsers = async (req, res, next) => {
   const { page, limit, search, role } = req.query;
 
   const validroles = ['admin', 'mentor', 'user'];
-  if (role && !validroles.includes(role)) {
-    const error = new Error('Invalid role');
-    error.statusCode = 400;
-    throw error;
-  }
+  const filteredRole = role && validroles.includes(role) ? role : undefined;
 
-  const result = await getAllUsersService({ page, limit, search, role });
-  res.json(result);
+  const result = await getAllUsersService({ page, limit, search, role: filteredRole });
+  
+  // ✅ Return hanya users, tanpa meta
+  res.json({ users: result.users });
 };
 
 export const getUserMe = async (req, res, next) => {
