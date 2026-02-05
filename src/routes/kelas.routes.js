@@ -7,10 +7,21 @@ import {
   deleteKelas,
 } from '../controllers/kelasController.js';
 import checkRole from '../middleware/checkRole.middleware.js';
+import { validate } from '../middleware/validate.middleware.js';
+import {
+  createKelasSchema,
+  updateKelasSchema,
+} from '../validations/kelas.validation.js';
+
 export const kelasRoutes = express.Router();
 
-kelasRoutes.post('/', checkRole(['mentor', 'admin']), createKelas);
-kelasRoutes.get('/', checkRole(['mentor', 'admin']), getAllKelas); 
+// GET - NO VALIDATION
+kelasRoutes.get('/', checkRole(['mentor', 'admin']), getAllKelas);
 kelasRoutes.get('/:id', getKelasById);
-kelasRoutes.patch('/:id', checkRole(['mentor', 'admin']), updateKelas);
+
+// POST, PATCH - WITH VALIDATION
+kelasRoutes.post('/', checkRole(['mentor', 'admin']), validate(createKelasSchema), createKelas);
+kelasRoutes.patch('/:id', checkRole(['mentor', 'admin']), validate(updateKelasSchema), updateKelas);
+
+// DELETE - NO VALIDATION
 kelasRoutes.delete('/:id', checkRole(['mentor', 'admin']), deleteKelas);

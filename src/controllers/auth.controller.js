@@ -211,7 +211,7 @@ export async function resetPasswordController(req, res, next) {
 
   await prisma.reset_password_token.delete({
     where: {
-      id: resetToken.id,
+      id_rp_token: resetToken.id_rp_token,
     },
   });
 
