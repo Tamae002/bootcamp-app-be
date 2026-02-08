@@ -41,18 +41,23 @@ export async function forgotPassword(req, res, next) {
 
   // Setup transporter email
   const transporter = nodemailer.createTransport({
-    host: "smtp.resend.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.RESEND_USERNAME,
-      pass: process.env.RESEND_PASSWORD,
-    },
-  });
+  // Jika EMAIL_SERVICE ada isinya, gunakan service tersebut. 
+  // Jika kosong (null/undefined), Nodemailer akan menggunakan host & port.
+  ...(process.env.EMAIL_SERVICE ? { service: process.env.EMAIL_SERVICE } : {
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT),
+    secure: process.env.EMAIL_PORT === '465',
+  }),
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});;
+
 
   // Kirim email
   await transporter.sendMail({
-    from: "bootcampapps@bootcamp.raihankr.my.id",
+    from: process.env.EMAIL_SENDER,
     to: email,
     subject: "Reset Password Akun Anda",
     html: `
