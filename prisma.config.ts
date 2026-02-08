@@ -2,7 +2,7 @@ import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: "./src/models/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
@@ -13,6 +13,6 @@ export default defineConfig({
     externalTables: true,
   },
   enums: {
-    external: ["user_role_enum", "jawaban_status_enum"],
+    external: [], 
   },
 });

@@ -1,0 +1,178 @@
+import bcrypt from 'bcrypt';
+import prisma from '../config/prisma.js';
+
+const saltRounds = 10;
+
+const sanitizeUser = (user) => {
+  const { password, ...safe } = user;
+  return safe;
+};
+
+export const createUserService = async (data) => {
+  const { email, password, role, name, gambar } = data;
+
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      role,
+      name,
+      gambar,
+    },
+  });
+  return sanitizeUser(user);
+};
+
+export const getUserByIdService = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: { user_id: id },
+  });
+  if (!user) return null;
+  return sanitizeUser(user);
+};
+
+export const getAllUsersService = async ({ page = 1, limit = 10, search, role } = {}) => {
+  const where = {
+    isActive: true,
+    ...(role && { role }),
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } }
+      ]
+    })
+  };
+
+  const skip = (page - 1) * limit;
+  const take = Number(limit);
+
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      skip,
+      take,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        user_id: true,
+        name: true,
+        email: true,
+        role: true,
+        gambar: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  return {
+    users,
+    meta: {
+      page: Number(page),
+      limit: take,
+      total,
+      totalPages: Math.ceil(total / take),
+    },
+  };
+};
+
+export const getUserMeService = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      user_id: true,
+      email: true,
+      name: true,
+      role: true,
+      gambar: true,
+      isActive: true,
+    }
+  });
+
+  // Pisahkan pengecekan user ada atau tidak, dengan pengecekan user aktif atau tidak.
+  // Ini memberikan pesan error yang lebih jelas.
+  if (!user || !user.isActive) {
+    const error = new Error('User not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Hapus properti `isActive` dari objek yang dikembalikan ke controller
+  const { isActive, ...userData } = user;
+  return userData;
+};
+
+export const updateUserService = async (id, data) => {
+  const { email, password, role, name, gambar, isActive } = data;
+
+  // Passwordnya di hash dulu
+  let updatedData = {
+      ...(email !== undefined && { email }),
+      ...(role !== undefined && { role }),
+      ...(name !== undefined && { name }),
+      ...(gambar !== undefined && { gambar }),
+      ...(isActive !== undefined && { isActive }),
+    };
+
+    if (password !== undefined) {
+    updatedData.password = await bcrypt.hash(password, saltRounds);
+  }
+  
+  const user = await prisma.user.update({
+    where: { user_id: id },
+    data: updatedData,
+  });
+return sanitizeUser(user);
+};
+
+export const deleteUserService = async (id) => {
+  await prisma.user.delete({
+    where: { user_id: id },
+  });
+};
+
+// Get Daftar Kelas yang diikuti oleh user (role: user)
+export const getUserKelasService = async ({ page = 1, limit = 10, user_id }) => {
+  const skip = (page - 1) * limit;
+
+  const whereFilter = {
+    anggota: {
+      some: {
+        user_id: user_id,
+        user: {
+          role: 'user', // pastikan hanya user biasa
+        },
+      },
+    },
+  };
+
+  const [total, data] = await Promise.all([
+    prisma.kelas.count({ where: whereFilter }),
+    prisma.kelas.findMany({
+      where: whereFilter,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = parseInt(page);
+  const hasNextPage = currentPage < totalPages;
+
+  return {
+    data,
+    meta: {
+      total,
+      page: currentPage,
+      lastPage: totalPages,
+      limit: parseInt(limit),
+      has_next_page: hasNextPage,
+    },
+  };
+};

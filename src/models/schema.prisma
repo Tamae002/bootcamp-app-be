@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output = "../../generated/prisma"
 }
 
 datasource db {
@@ -7,75 +8,105 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum user_role_enum {
-  admin
-  user
-}
-
-enum jawaban_status_enum {
-  menunggu
-  dinilai
-}
-
-model User {
-  user_id   String   @id @map("user_id") @default(cuid()) @db.VarChar(36)
-  name      String   @db.VarChar(255)
-  email     String   @unique @db.VarChar(255)
-  password  String   @db.VarChar(255)
-  role      user_role_enum
-  gambar    String?  @db.VarChar(255)
-  sessions  session[]
-  anggota   anggota_kelas[]
-  jawaban   jawaban[]
+model user {
+  user_id              String                 @id(map: "User_pkey") @default(cuid()) @db.VarChar(36)
+  name                 String                 @db.VarChar(255)
+  email                String                 @db.VarChar(255) @unique
+  password             String                 @db.VarChar(255)
+  role                 user_role_enum
+  gambar               String?                @db.VarChar(255)
+  isActive             Boolean?               @default(true)
+  createdAt            DateTime?              @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime?              @default(now()) @db.Timestamp(6)
+  anggota              anggota_kelas[]
+  jawaban              jawaban[]
+  reset_password_token reset_password_token[]
+  sessions             session[]
 }
 
 model kelas {
-  kelas_id String @id @map("kelas_id") @default(cuid()) @db.VarChar(36)
-  nama_kelas String @db.VarChar(255)
-  deskripsi String @db.VarChar(255)
-  tanggal_mulai DateTime
-  tanggal_berakhir DateTime
-  pertemuan pertemuan[]
-  anggota anggota_kelas[]
+  kelas_id         String          @id(map: "Kelas_pkey") @default(cuid()) @map("Kelas_id") @db.VarChar(36)
+  nama_kelas       String          @unique(map: "Kelas_nama_kelas_unique") @db.VarChar(255)
+  gambar           String?         @db.VarChar(255)
+  deskripsi        String?         @db.Text
+  tanggal_mulai    DateTime?       @db.Timestamp(6)
+  tanggal_berakhir DateTime?       @db.Timestamp(6)
+  isActive         Boolean?        @default(true)
+  createdAt        DateTime?       @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime?       @default(now()) @db.Timestamp(6)
+  anggota          anggota_kelas[]
+  pertemuan        pertemuan[]
 }
 
 model pertemuan {
-  pertemuan_id String @id @map("pertemuan_id") @default(cuid()) @db.VarChar(36)
-  judul String @db.VarChar(255)
-  deskripsi_tugas String @db.VarChar(255)
-  kelas_id String @map("kelas_id") @db.VarChar(36)
-  tanggal DateTime
-  kelas kelas @relation(fields: [kelas_id], references: [kelas_id])
-  jawaban jawaban[]
-
-  @@unique([kelas_id, judul])
+  pertemuan_id    String    @id(map: "Pertemuan_pkey") @default(cuid()) @map("Pertemuan_id") @db.VarChar(36)
+  kelas_id        String?   @db.VarChar(36)
+  judul           String    @db.VarChar(255)
+  tanggal         DateTime  @db.Timestamp(6)
+  deskripsi_tugas String?   @db.Text
+  link_lampiran    String?   @db.VarChar(255) 
+  isActive        Boolean?  @default(true)
+  createdAt       DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime? @default(now()) @db.Timestamp(6)
+  jawaban         jawaban[]
+  kelas           kelas?    @relation(fields: [kelas_id], references: [kelas_id], onDelete: Cascade, onUpdate: NoAction, map: "Pertemuan_kelas_id_fkey")
 }
 
 model anggota_kelas {
-  anggota_kelas_id String @id @default(cuid()) @db.VarChar(36)
-  user_id String @map("user_id") @db.VarChar(36)
-  kelas_id String @map("kelas_id") @db.VarChar(36)
-  user User @relation(fields: [user_id], references: [user_id])
-  kelas kelas @relation(fields: [kelas_id], references: [kelas_id])
-  @@unique([user_id, kelas_id])
+  anggota_kelas_id String    @default(cuid()) @db.VarChar(36) @id
+  user_id          String    @db.VarChar(36)
+  kelas_id         String    @db.VarChar(36)
+  isActive         Boolean?  @default(true)
+  createdAt        DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime? @default(now()) @db.Timestamp(6)
+  kelas            kelas     @relation(fields: [kelas_id], references: [kelas_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_kelas_id_fkey")
+  user             user      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "anggota_Kelas_user_id_fkey")
+
+  @@unique([user_id, kelas_id], map: "anggota_Kelas_uniquekey")
 }
 
 model jawaban {
-  jawaban_id String @id @map("jawaban_id") @default(cuid()) @db.VarChar(36)
-  pertemuan_id String @map("pertemuan_id") @db.VarChar(36)
-  user_id String @map("user_id") @db.VarChar(36)
-  file_path String @db.VarChar(255)
-  nilai Int @default(0)
-  status jawaban_status_enum
-  pertemuan pertemuan @relation(fields: [pertemuan_id], references: [pertemuan_id])
-  user User @relation(fields: [user_id], references: [user_id])
-  
-  @@unique([pertemuan_id, user_id])
+  jawaban_id   String               @id(map: "Jawaban_pkey") @default(cuid()) @map("Jawaban_id") @db.VarChar(36)
+  pertemuan_id String?              @db.VarChar(36)
+  user_id      String?              @db.VarChar(36)
+  file_path    String?              @db.VarChar(255)
+  deskripsi    String?  @db.Text          
+  nilai        Int?                 @db.SmallInt
+  status       status_jawaban       @default(menunggu)
+  isActive     Boolean?             @default(true)
+  createdAt    DateTime?            @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime?            @default(now()) @db.Timestamp(6)
+  pertemuan    pertemuan?           @relation(fields: [pertemuan_id], references: [pertemuan_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_pertemuan_id_fkey")
+  user         user?                @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Jawaban_user_id_fkey")
+
+  @@unique([pertemuan_id, user_id], map: "jawaban_uniquekey")
 }
 
 model session {
-  session_id String @id @map("session_id") @default(cuid()) @db.VarChar(36)
-  user_id String @map("user_id") @db.VarChar(36)
-  token String @db.VarChar(255)
-  user User @relation(fields: [user_id], references: [user_id])
+  session_id String    @id @default(cuid()) @db.VarChar(36)
+  user_id    String?   @db.VarChar(36)
+  token      String
+  isActive   Boolean?  @default(true)
+  createdAt  DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime? @default(now()) @db.Timestamp(6)
+  user       user?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model reset_password_token {
+  id_rp_token String   @id @db.VarChar(36) @default(cuid())
+  user_id     String   @db.VarChar(36)
+  token       String   @db.VarChar(255) @unique
+  expires_at  DateTime @db.Timestamp(6)
+  user        user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+}
+
+enum user_role_enum {
+  admin
+  mentor
+  user
+}
+
+enum status_jawaban {
+  menunggu
+  dinilai
 }
