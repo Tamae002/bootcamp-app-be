@@ -11,12 +11,11 @@ import pertemuanRoutes from './pertemuan.routes.js';
 
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { getHomePage } from '../controllers/home.controller.js'; // ✅
+import checkRole from '../middleware/checkRole.middleware.js';
 
 const router = Router();
 
-router.get('/home', authMiddleware, getHomePage);
-
-
+router.get('/home', authMiddleware, checkRole(['user']),getHomePage);
 router.use('/kelas', authMiddleware, kelasRoutes);
 router.use('/auth', authRoutes);
 router.use('/user', authMiddleware, userRoutes);

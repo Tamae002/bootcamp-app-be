@@ -7,7 +7,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from "express";
 import cors from "cors";
-import errorHandler from './middleware/errorHandler.middlewares.js';
 import cookieParser from "cookie-parser";
 import routes from './routes/index.routes.js';
 import https from "https";
