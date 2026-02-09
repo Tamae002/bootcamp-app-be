@@ -8,9 +8,14 @@ import jawabanRoutes from './jawaban.routes.js';
 import dashboardRoutes from './dashboard.routes.js';
 import fileRoutes from './file.routes.js';
 import pertemuanRoutes from './pertemuan.routes.js';
+
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import { getHomePage } from '../controllers/home.controller.js'; // ✅
 
 const router = Router();
+
+router.get('/home', authMiddleware, getHomePage);
+
 
 router.use('/kelas', authMiddleware, kelasRoutes);
 router.use('/auth', authRoutes);

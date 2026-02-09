@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from "express";
 import cors from "cors";
+import errorHandler from './middleware/errorHandler.middlewares.js';
 import cookieParser from "cookie-parser";
 import routes from './routes/index.routes.js';
 import https from "https";
@@ -88,7 +89,7 @@ if (process.env.NODE_ENV !== 'production') {
       explorer: true,
       swaggerOptions: {
         persistAuthorization: true,
-        defaultModelsExpandDepth: -1 // Sembunyikan schemas di sidebar
+        defaultModelsExpandDepth: -1 
       },
       customCss: `
         .swagger-ui .topbar {
