@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import {
   createKelas,
   getAllKelas,
@@ -13,7 +13,7 @@ import {
   updateKelasSchema,
 } from '../validations/kelas.validation.js';
 
-export const kelasRoutes = express.Router();
+export const kelasRoutes = Router();
 
 // GET - NO VALIDATION
 kelasRoutes.get('/', checkRole(['mentor', 'admin']), getAllKelas);
