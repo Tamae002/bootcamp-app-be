@@ -20,6 +20,6 @@ router.post('/forgot-password', validate(forgotPasswordSchema), forgotPassword);
 router.post('/reset-password/:token', validate(resetPasswordSchema), resetPasswordController);
 
 // GET/POST - NO VALIDATION (logout biasanya tidak butuh body)
-router.post('/logout', logoutController);
+router.get('/logout', logoutController);
 
 export default router;
