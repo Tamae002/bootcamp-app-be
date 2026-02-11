@@ -20,7 +20,6 @@ export const checkRole = (allowedRoles) => {
 
       // Fallback: if not authenticated yet, verify token and session here
       const token = req.cookies['token']
-      console.log(token)
       if (!token) {
         const err = new Error('Unauthorized. please login to access this resources.')
         err.statusCode = 401
