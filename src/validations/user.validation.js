@@ -81,3 +81,14 @@ export const deleteUserSchema = z.object({
   }),
   query: z.object({}).optional(),
 });
+
+// Update profile schema
+export const updateProfileSchema = z.object({
+  body: z.object({
+    name: z.string().min(1, 'Nama is required').max(255, 'Nama maksimal 255 karakter').optional(),
+    email: z.string().email('Email tidak valid').max(255, 'Email maksimal 255 karakter').optional(),
+    gambar: z.string().max(255, 'Gambar path maksimal 255 karakter').optional(),
+  }),
+  params: z.object({}).optional(),
+  query: z.object({}).optional(),
+});

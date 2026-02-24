@@ -6,6 +6,7 @@ import {
   updateUserService,
   deleteUserService,
   getUserKelasService, 
+  updateProfileService,
 } from '../services/user.service.js';
 
 export const createUser = async (req, res, next) => {
@@ -83,7 +84,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const getUserKelas = async (req, res, next) => {
   const { page = 1, limit = 10 } = req.query;
-  const user_id = req.userId; // dari middleware authMiddleware
+  const user_id = req.userId;
 
   const result = await getUserKelasService({
     page: parseInt(page),
@@ -92,4 +93,16 @@ export const getUserKelas = async (req, res, next) => {
   });
 
   res.json({ success: true, ...result });
+};
+
+export const updateProfile = async (req, res, next) => {
+  const user_id = req.userId;
+  const { name, email, gambar } = req.body;
+
+  const user = await updateProfileService(user_id, { name, email, gambar });
+  
+  res.json({
+    message: 'Profile berhasil diupdate',
+    data: user,
+  });
 };
