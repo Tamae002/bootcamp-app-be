@@ -88,7 +88,7 @@ if (process.env.NODE_ENV !== 'production') {
       explorer: true,
       swaggerOptions: {
         persistAuthorization: true,
-        defaultModelsExpandDepth: -1 // Sembunyikan schemas di sidebar
+        defaultModelsExpandDepth: -1 
       },
       customCss: `
         .swagger-ui .topbar {
@@ -150,9 +150,7 @@ app.get('/link-preview', async (req, res) => {
   try {
     // Fetch the webpage
     const response = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0)',
-      },
+      headers: {},
       timeout: 10000, // 10 second timeout
       maxRedirects: 5,
     });
