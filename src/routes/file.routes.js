@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { serveIt, uploadMultipleFiles } from '../controllers/file.controller.js';
-import { upload } from '../middleware/file.middleware.js';
+import { serveIt, uploadFile, uploadMultipleFiles } from '../controllers/file.controller.js';
 import { validate } from '../middleware/validate.middleware.js';
 import {
   uploadMultipleFilesSchema,
 } from '../validations/file.validation.js';
+import { uploadImage, uploadFiles } from '../middleware/file.middleware.js';
 
 const router = Router();
 
@@ -14,9 +14,16 @@ router.get('/:filename', serveIt);
 // POST - WITH VALIDATION
 router.post(
   '/upload',
-  upload.array('files', 10),
+  uploadImage.array('files', 10),
   validate(uploadMultipleFilesSchema),
   uploadMultipleFiles
 );
+
+router.post(
+  '/upload-task',
+  uploadFiles.array('files', 10),
+  validate(uploadMultipleFilesSchema),
+  uploadMultipleFiles
+)
 
 export default router;

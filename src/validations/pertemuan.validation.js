@@ -7,7 +7,7 @@ export const createPertemuanSchema = z.object({
     judul: z.string().min(1, 'Judul is required').max(255, 'Judul maksimal 255 karakter'),
     tanggal: z.string().datetime('Tanggal harus format datetime yang valid'),
     deskripsi_tugas: z.string().optional(),
-    link_lampiran: z.string().url('Link harus URL yang valid').max(255, 'Link maksimal 255 karakter').optional(),
+    link_lampiran: z.string().url('Link harus URL yang valid').max(255, 'Link maksimal 255 karakter').nullable(),
   }),
   params: z.object({}).optional(),
   query: z.object({}).optional(),
@@ -20,7 +20,7 @@ export const updatePertemuanSchema = z.object({
     judul: z.string().min(1, 'Judul is required').max(255, 'Judul maksimal 255 karakter').optional(),
     tanggal: z.string().datetime('Tanggal harus format datetime yang valid').optional(),
     deskripsi_tugas: z.string().optional(),
-    link_lampiran: z.string().url('Link harus URL yang valid').max(255, 'Link maksimal 255 karakter').optional(),
+    link_lampiran: z.z.string().url('Link harus URL yang valid').max(255, 'Link maksimal 255 karakter').nullable(),
   }),
   params: z.object({
     id: z.string().cuid('Invalid pertemuan ID'),
