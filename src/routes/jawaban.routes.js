@@ -14,7 +14,7 @@ const router = Router();
 router.get(
   '/:pertemuan_id',
   authMiddleware,
-  checkRole(['admin', 'mentor']),
+  checkRole(['admin', 'mentor', 'superadmin']), // tambahkan superadmin
   getJawabanByPertemuan
 );
 
@@ -22,7 +22,7 @@ router.get(
 router.patch(
   '/:jawaban_id/nilai',
   authMiddleware,
-  checkRole(['mentor']),
+  checkRole(['mentor', 'superadmin']), // tambahkan superadmin
   validate(beriNilaiSchema),
   beriNilaiJawaban
 );

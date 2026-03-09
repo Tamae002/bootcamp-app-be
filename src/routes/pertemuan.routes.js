@@ -20,10 +20,10 @@ router.get('/', getAllPertemuanHandler);
 router.get('/:id', getPertemuanByIdHandler);
 
 // POST, PUT - WITH VALIDATION
-router.post('/', checkRole(['mentor', 'admin']), validate(createPertemuanSchema), createPertemuanHandler);
-router.put('/:id', checkRole(['mentor', 'admin']), validate(updatePertemuanSchema), updatePertemuanHandler);
+router.post('/', checkRole(['mentor', 'admin', 'superadmin']), validate(createPertemuanSchema), createPertemuanHandler); // tambahkan superadmin
+router.put('/:id', checkRole(['mentor', 'admin', 'superadmin']), validate(updatePertemuanSchema), updatePertemuanHandler); // tambahkan superadmin
 
 // DELETE - NO VALIDATION
-router.delete('/:id', checkRole(['mentor', 'admin']), deletePertemuanHandler);
+router.delete('/:id', checkRole(['mentor', 'admin', 'superadmin']), deletePertemuanHandler); // tambahkan superadmin
 
 export default router;

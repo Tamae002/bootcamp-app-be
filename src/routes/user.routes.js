@@ -20,28 +20,20 @@ import {
 
 const router = Router();
 
-router.get('/me/kelas', authMiddleware, getUserKelas);
-
+// GET - NO VALIDATION
 router.get('/me/kelas', authMiddleware, getUserKelas);
 router.get('/me', authMiddleware, getUserMe);
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
 
+// PUT - WITH VALIDATION (edit profile sendiri)
 router.put('/me/profile', authMiddleware, validate(updateProfileSchema), updateProfile);
 
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
+// POST, PUT - WITH VALIDATION
+router.post('/', checkRole(['mentor', 'admin', 'superadmin']), validate(createUserSchema), createUser); // tambahkan superadmin
+router.put('/:id', checkRole(['mentor', 'admin', 'superadmin']), validate(updateUserSchema), updateUser); // tambahkan superadmin
 
-router.post('/', checkRole(['mentor', 'admin']), validate(createUserSchema), createUser);
-router.put('/:id', checkRole(['mentor', 'admin']), validate(updateUserSchema), updateUser);
-
-router.delete('/:id', checkRole(['mentor', 'admin']), deleteUser);
-
-router.get('/me', authMiddleware, getUserMe);
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-
-router.post('/', checkRole(['mentor', 'admin']), validate(createUserSchema), createUser);
-router.put('/:id', checkRole(['mentor', 'admin']), validate(updateUserSchema), updateUser);
-
-router.delete('/:id', checkRole(['mentor', 'admin']), deleteUser);
+// DELETE - NO VALIDATION
+router.delete('/:id', checkRole(['mentor', 'admin', 'superadmin']), deleteUser); // tambahkan superadmin
 
 export default router;
