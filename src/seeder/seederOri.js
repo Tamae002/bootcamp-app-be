@@ -15,7 +15,7 @@ async function createAdminAccount() {
       name: "Administrator",
       email: process.env.ADMIN_EMAIL,
       password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, saltRounds),
-      role: "admin",
+      role: "superadmin",
       gambar: null,
     },
   });

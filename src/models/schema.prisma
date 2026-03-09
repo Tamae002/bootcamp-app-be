@@ -104,6 +104,7 @@ enum user_role_enum {
   admin
   mentor
   user
+  superadmin
 }
 
 enum status_jawaban {

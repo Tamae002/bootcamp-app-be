@@ -6,8 +6,8 @@ export const createUserSchema = z.object({
     email: z.string().email('Email tidak valid').max(255, 'Email maksimal 255 karakter'),
     password: z.string().min(8, 'Password minimal 8 karakter').max(255, 'Password maksimal 255 karakter'),
     name: z.string().min(1, 'Nama is required').max(255, 'Nama maksimal 255 karakter'),
-    role: z.enum(['admin', 'mentor', 'user'], {
-      errorMap: () => ({ message: 'Role harus admin, mentor, atau user' }),
+    role: z.enum(['admin', 'mentor', 'user', 'superadmin'], {
+      errorMap: () => ({ message: 'Role harus admin, mentor, user, atau superadmin' }),
     }),
     gambar: z.string().max(255, 'Gambar path maksimal 255 karakter').optional(),
   }),
@@ -21,8 +21,8 @@ export const updateUserSchema = z.object({
     email: z.string().email('Email tidak valid').max(255, 'Email maksimal 255 karakter').optional(),
     password: z.string().min(8, 'Password minimal 8 karakter').max(255, 'Password maksimal 255 karakter').optional(),
     name: z.string().min(1, 'Nama is required').max(255, 'Nama maksimal 255 karakter').optional(),
-    role: z.enum(['admin', 'mentor', 'user'], {
-      errorMap: () => ({ message: 'Role harus admin, mentor, atau user' }),
+    role: z.enum(['admin', 'mentor', 'user', 'superadmin'], {
+      errorMap: () => ({ message: 'Role harus admin, mentor, user, atau superadmin' }),
     }).optional(),
     gambar: z.string().max(255, 'Gambar path maksimal 255 karakter').optional(),
     isActive: z.boolean().optional(),
@@ -50,8 +50,8 @@ export const getAllUsersSchema = z.object({
     page: z.string().regex(/^\d+$/, 'Page harus angka').optional(),
     limit: z.string().regex(/^\d+$/, 'Limit harus angka').optional(),
     search: z.string().optional(),
-    role: z.enum(['admin', 'mentor', 'user'], {
-      errorMap: () => ({ message: 'Role harus admin, mentor, atau user' }),
+    role: z.enum(['admin', 'mentor', 'user', 'superadmin'], {
+      errorMap: () => ({ message: 'Role harus admin, mentor, user, atau superadmin' }),
     }).optional(),
   }).optional(),
 });

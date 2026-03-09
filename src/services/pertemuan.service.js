@@ -38,6 +38,7 @@ export async function getPertemuanById(pertemuan_id) {
           jawaban_id: true,
           user_id: true,
           file_path: true,
+          deskripsi: true,
           nilai: true,
           status: true,
           createdAt: true,

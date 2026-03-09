@@ -43,13 +43,12 @@ export const getUserById = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
   const { page, limit, search, role } = req.query;
 
-  const validroles = ['admin', 'mentor', 'user'];
+  const validroles = ['admin', 'mentor', 'user', 'superadmin']; // tambahkan superadmin
   const filteredRole = role && validroles.includes(role) ? role : undefined;
 
   const result = await getAllUsersService({ page, limit, search, role: filteredRole });
   
-  // ✅ Return hanya users, tanpa meta
-  res.json({ ...result });
+  res.json({ users: result.users });
 };
 
 export const getUserMe = async (req, res, next) => {
