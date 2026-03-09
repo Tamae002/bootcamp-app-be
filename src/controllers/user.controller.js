@@ -48,7 +48,7 @@ export const getAllUsers = async (req, res, next) => {
 
   const result = await getAllUsersService({ page, limit, search, role: filteredRole });
   
-  res.json({ users: result.users });
+  res.json({ ...result });
 };
 
 export const getUserMe = async (req, res, next) => {
