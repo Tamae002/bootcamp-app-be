@@ -4,7 +4,7 @@ import prisma from '../config/prisma.js';
 // CREATE
 export async function createPertemuan(data) {
   const { kelas_id, ...rest } = data; // Ekstrak kelas_id
-  
+
   return prisma.pertemuan.create({
     data: {
       // Gunakan relasi nested untuk kelas
@@ -38,11 +38,12 @@ export async function getPertemuanById(pertemuan_id) {
           jawaban_id: true,
           user_id: true,
           file_path: true,
+          deskripsi: true,
           nilai: true,
           status: true,
           createdAt: true,
         },
-        orderBy: { createdAt: 'desc' }, 
+        orderBy: { createdAt: 'desc' },
       },
     },
   });
@@ -51,9 +52,9 @@ export async function getPertemuanById(pertemuan_id) {
 // UPDATE
 export async function updatePertemuan(pertemuan_id, data) {
   const { kelas_id, ...rest } = data;
-  
+
   const updateData = { ...rest };
-  
+
   // Jika ada kelas_id dalam data update, gunakan relasi nested
   if (kelas_id !== undefined) {
     updateData.kelas = {
@@ -62,10 +63,10 @@ export async function updatePertemuan(pertemuan_id, data) {
       }
     };
   }
-  
+
   return prisma.pertemuan.update({
     where: { pertemuan_id, isActive: true },
-     updateData,
+    data: updateData,
   });
 }
 

@@ -40,12 +40,12 @@ const getAnggotaKelas = async (kelas_id, client = prisma) => {
 export const createKelasWithAnggota = async (data, added_users = []) => {
   return prisma.$transaction(async (tx) => {
     const kelasData = {
-          ...data,
-          tanggal_mulai: data.tanggal_mulai ? new Date(data.tanggal_mulai) : null,
-          tanggal_berakhir: data.tanggal_berakhir ? new Date(data.tanggal_berakhir) : null,
-        };
+      ...data,
+      tanggal_mulai: data.tanggal_mulai ? new Date(data.tanggal_mulai) : null,
+      tanggal_berakhir: data.tanggal_berakhir ? new Date(data.tanggal_berakhir) : null,
+    };
 
-        // Buat kelas
+    // Buat kelas
     const kelas = await tx.kelas.create({ data: kelasData });
 
     // Tambah anggota jika ada
@@ -68,19 +68,32 @@ export const createKelasWithAnggota = async (data, added_users = []) => {
 };
 
 //Get All Kelas (admin = semua, mentor = hanya kelas yang diikuti)
-export const getAllKelas = async ({ page = 1, limit = 10, role, user_id }) => {
+export const getAllKelas = async ({ page = 1, limit = 10, search, role, user_id }) => {
   const skip = (page - 1) * limit;
 
   // kalau mentor, filter hanya kelas yang dia ikuti
   const whereFilter = role === 'mentor'
     ? {
-        anggota: {
-          some: {
-            user_id: user_id,
-          },
+      anggota: {
+        some: {
+          user_id: user_id,
         },
-      }
-    : {}; // admin tidak ada filter, lihat semua
+      },
+       ...(search && {
+      OR: [
+        { nama_kelas: { contains: search, mode: 'insensitive' } },
+        { deskripsi: { contains: search, mode: 'insensitive' } }
+      ]
+    })
+    }
+    : {
+      ...(search && {
+        OR: [
+          { nama_kelas: { contains: search, mode: 'insensitive' } },
+          { deskripsi: { contains: search, mode: 'insensitive' } }
+        ]
+      })
+    }; // admin tidak ada filter, lihat semua
 
   const [total, data] = await Promise.all([
     prisma.kelas.count({ where: whereFilter }),
@@ -130,19 +143,19 @@ export const getKelasByIdWithAnggota = async (kelas_id) => {
 export const updateKelasWithAnggota = async (kelas_id, data, added_users = [], removed_users = []) => {
   return prisma.$transaction(async (tx) => {
 
-       // ✅ Convert tanggal ke DateTime (cuma convert kalo ada)
+    // ✅ Convert tanggal ke DateTime (cuma convert kalo ada)
     const kelasUpdateData = { ...data };
-    
+
     if (kelasUpdateData.tanggal_mulai) {
       kelasUpdateData.tanggal_mulai = new Date(kelasUpdateData.tanggal_mulai);
     }
-    
+
     if (kelasUpdateData.tanggal_berakhir) {
       kelasUpdateData.tanggal_berakhir = new Date(kelasUpdateData.tanggal_berakhir);
     }
 
     // Update kelas
-        const kelas = await tx.kelas.update({
+    const kelas = await tx.kelas.update({
       where: { kelas_id: kelas_id },
       data: kelasUpdateData,
     });
@@ -159,7 +172,7 @@ export const updateKelasWithAnggota = async (kelas_id, data, added_users = [], r
       });
     }
 
-        if (removed_users?.length > 0) {
+    if (removed_users?.length > 0) {
       await tx.anggota_kelas.deleteMany({
         where: {
           kelas_id: kelas_id,

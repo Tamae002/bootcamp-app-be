@@ -40,9 +40,9 @@ export async function getPertemuanByIdHandler(req, res, next) {
 // UPDATE
 export async function updatePertemuanHandler(req, res, next) {
   const { id } = req.params;
-  const { Kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
+  const { kelas_id, judul, tanggal, deskripsi_tugas, link_lampiran } = req.body;
   const pertemuan = await updatePertemuan(id, {
-    Kelas_id,
+    kelas_id,
     judul,
     tanggal: tanggal ? new Date(tanggal) : undefined,
     deskripsi_tugas,

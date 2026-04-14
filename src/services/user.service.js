@@ -176,3 +176,31 @@ export const getUserKelasService = async ({ page = 1, limit = 10, user_id }) => 
     },
   };
 };
+
+// Update profile user sendiri (dari cookie)
+export const updateProfileService = async (user_id, data) => {
+  const { name, email, gambar } = data;
+
+  const updatedData = {
+    ...(name !== undefined && { name }),
+    ...(email !== undefined && { email }),
+    ...(gambar !== undefined && { gambar }),
+  };
+
+  const user = await prisma.user.update({
+    where: { user_id },
+    data: updatedData,
+    select: {
+      user_id: true,
+      name: true,
+      email: true,
+      role: true,
+      gambar: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return user;
+};
